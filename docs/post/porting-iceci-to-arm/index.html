@@ -60,7 +60,7 @@
     <div class="nav-container">
         <a class="logo-link" href="/">
             <div id="logo-desktop">
-    <img src="/images/layouts/logo.jpeg" width="192" height="192">
+    <img src="./images/layouts/logo.jpeg" width="192" height="192">
 </div>
 
             <span class="header-hidden">Navigate back to the homepage</span>
@@ -119,7 +119,7 @@
 <h2 id="mindset">Mindset</h2>
 <p>Being a dev that recently mostly writes in Golang and Python I’m kind of used to cloning the sources on a machine and running them. Both Golang and Python have great portability and developers are able to get all the necessary tools to build and run their programs very easily.</p>
 <p>Same goes for Docker. I’m so used to being able to do <code>docker pull</code> and run things that I need, that I often forget which system version I'm actually running on my host - it is irrelevant because my image is - for example - <code>debian:10.1</code>.</p>
-<p><img src="/images/post/arm2.jpeg" alt="alt-text" title="The so-called K3s cluster"></p>
+<p><img src="./images/post/arm2.jpeg" alt="alt-text" title="The so-called K3s cluster"></p>
 <p>Those combined experiences gave me an idea — a silly one — that we can port IceCI to ARM architecture and run it on one of my Raspberry Pis in just a few commands. I already had a node k3s cluster running for tests, so what can go wrong?</p>
 <p>Seriously I will end up with this one tatooed someday…</p>
 <h2 id="wednesday-10pm">Wednesday ~10PM</h2>
@@ -151,7 +151,7 @@ Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:1
 <p>This time, as I was getting a bit tired, the thought came in slower and more gently. The previous images had just <code>ADD</code>, <code>CMD</code> and <code>EXPOSE</code> operations in docker file. This one has <code>RUN</code>, and I couldn't run ARM based images on my machine for the same reason that I could not run my arm64 images on Raspberry. And another thing - I will need to do some changes in the code. We have been preparing to have all of the image version passed as environment variables, however not all of them were passed to the builder - the component preparing specs for pods.</p>
 <h2 id="thursday--1am">Thursday — ~1AM</h2>
 <p>The builder Raspberry Pi installation has finished.</p>
-<p><img src="/images/post/arm3.jpeg" alt="alt-text" title="Another Raspberry Pi to build the images"></p>
+<p><img src="./images/post/arm3.jpeg" alt="alt-text" title="Another Raspberry Pi to build the images"></p>
 <p>I made all the necessary changes to the application. I built and pushed both the app and the <code>iceci/utils</code> images.</p>
 <p>Kill all pods…</p>
 <p>Run a pipeline and…. finally!</p>
