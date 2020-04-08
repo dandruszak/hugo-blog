@@ -1,0 +1,435 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/images/favicon.svg">
+    
+    <link rel="stylesheet" href="/scss/custom.min.b645975a3e2c65b6f6bb734702ffc97a11dbc4bb55768ac935a36e9ab05e341e.css">
+    
+    <link rel="stylesheet" href="/css/prism.css" />
+    
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+
+ 
+
+
+
+
+
+
+	
+
+
+
+
+<title>New in Kubernetes 1.18 - kubectl alpha debug | icetek.io</title>
+<meta name="description" content="Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&rsquo;s take gander at one of the newest additions - kubectl alpha debug. This nifty kubectl feature gives you an additional tool for debugging pods when kubectl exec just doesn&rsquo;t cut it. Most probably your application-hosting containers won&rsquo;t have all the necessary debugging tools - they might not even have a shell.">
+<meta property="og:title" content="New in Kubernetes 1.18 - kubectl alpha debug | icetek.io">
+<meta property="og:site_name" content="icetek.io">
+<meta property="og:description" content="Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&rsquo;s take gander at one of the newest additions - kubectl alpha debug. This nifty kubectl feature gives you an additional tool for debugging pods when kubectl exec just doesn&rsquo;t cut it. Most probably your application-hosting containers won&rsquo;t have all the necessary debugging tools - they might not even have a shell.">
+<meta property="og:url" content="http://example.org/post/kubectl-alpha-debug/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content='http://example.org/images/post/kubernetes-1.18.png'><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="New in Kubernetes 1.18 - kubectl alpha debug | icetek.io">
+
+	<link rel="canonical" href="http://example.org/post/kubectl-alpha-debug/">
+
+
+	<meta name="twitter:description" content="Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&rsquo;s take gander at one of the newest additions - kubectl alpha debug. This nifty kubectl feature gives you an additional tool for debugging pods when kubectl exec just doesn&rsquo;t cut it. Most probably your application-hosting containers won&rsquo;t have all the necessary debugging tools - they might not even have a shell.">
+<meta name="twitter:image" content="http://example.org/images/post/kubernetes-1.18.png">
+<meta property="article:published_time" content="2020-03-31T00:00:00&#43;00:00">
+	<meta property="article:updated_time" content="2020-03-31T00:00:00&#43;00:00">
+
+
+
+    </head>
+
+
+<body class="line-numbers">
+
+    
+    <script src="/js/initColors.js"></script>
+
+    <div class="layout-styled">
+
+        <Section class="section">
+    <div class="nav-container">
+        <a class="logo-link" href="/">
+            <div id="logo-desktop">
+    <img src="/images/layouts/logo.jpeg" width="192" height="192">
+</div>
+
+            <span class="header-hidden">Navigate back to the homepage</span>
+        </a>
+    </div>
+</Section>
+
+
+        
+
+    <section class="section narrow">
+
+        <section id="articleHero" class="section narrow">
+    <div class="article-hero">
+        <header class="article-header">
+            <h1 class="article-hero-heading">New in Kubernetes 1.18 - kubectl alpha debug</h1>
+            <div class="article-hero-subtitle">
+                <div class="article-meta">
+                    
+
+
+    
+            <a href="/authors/dominik-andruszak/" class="article-author-link">
+                
+                    <div class="article-author-avatar">
+                        <img src="/images/authors/dominik.png" />
+                    </div>
+                
+                
+                <strong>Dominik Andruszak</strong>
+                
+                <span class="hide-on-mobile">,&nbsp;</span>
+            </a>
+    
+
+
+
+<script src="/js/collapseAuthors.js"></script>
+                    March 31, 2020
+                    • 7 min read
+                </div>
+            </div>
+        </header>
+        
+        <div class="article-hero-image-noshadow" id="ArticleImage__Hero">
+            <img src="/images/post/kubernetes-1.18.png">
+        </div>
+        
+    </div>
+</section>
+
+
+        <article  id="articleContent" class="post-content" style="position:relative;">
+            <p>Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&rsquo;s take gander at one of the newest additions - <code>kubectl alpha debug</code>. This nifty <code>kubectl</code> feature gives you an additional tool for debugging pods when <code>kubectl exec</code> just doesn&rsquo;t cut it. Most probably your application-hosting containers won&rsquo;t have all the necessary debugging tools - they might not even have a shell. The <code>kubectl alpha debug</code> feature allows you to create a temporary container inside your pod - and that container can contain all the tools that you need.</p>
+<h2 id="so-how-does-itwork">So.. how does it work?</h2>
+<p><code>kubectl alpha debug</code> utilizes ephemeral containers - a kind of temporary container that can be added while the pod is running. Ephemeral containers are built for debugging purposes only - they have a stripped down spec compared to base pod containers and they&rsquo;re not really suitable for hosting applications. The feature is still in alpha and has to be enabled through a feature gate. You can read more about ephemeral containers in the Kubernetes <a href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers">documentation</a>.</p>
+<h2 id="how-do-i-getin">How do I get in?</h2>
+<p>First, we have to make sure that we have version 1.18 for both the Kubernetes server and client. Even though ephemeral containers were introduced in Kubernetes 1.16, using <code>kubectl</code> 1.18 with Kubernetes 1.16 didn&rsquo;t seem to work properly in my cluster.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl version
+Client Version: version.Info<span style="color:#f92672">{</span>Major:<span style="color:#e6db74">&#34;1&#34;</span>, Minor:<span style="color:#e6db74">&#34;18&#34;</span>, GitVersion:<span style="color:#e6db74">&#34;v1.18.0&#34;</span>, GitCommit:<span style="color:#e6db74">&#34;9e991415386e4cf155a24b1da15becaa390438d8&#34;</span>, GitTreeState:<span style="color:#e6db74">&#34;clean&#34;</span>, BuildDate:<span style="color:#e6db74">&#34;2020-03-25T14:58:59Z&#34;</span>, GoVersion:<span style="color:#e6db74">&#34;go1.13.8&#34;</span>, Compiler:<span style="color:#e6db74">&#34;gc&#34;</span>, Platform:<span style="color:#e6db74">&#34;linux/amd64&#34;</span><span style="color:#f92672">}</span>
+Server Version: version.Info<span style="color:#f92672">{</span>Major:<span style="color:#e6db74">&#34;1&#34;</span>, Minor:<span style="color:#e6db74">&#34;18&#34;</span>, GitVersion:<span style="color:#e6db74">&#34;v1.18.0&#34;</span>, GitCommit:<span style="color:#e6db74">&#34;9e991415386e4cf155a24b1da15becaa390438d8&#34;</span>, GitTreeState:<span style="color:#e6db74">&#34;clean&#34;</span>, BuildDate:<span style="color:#e6db74">&#34;2020-03-25T14:50:46Z&#34;</span>, GoVersion:<span style="color:#e6db74">&#34;go1.13.8&#34;</span>, Compiler:<span style="color:#e6db74">&#34;gc&#34;</span>, Platform:<span style="color:#e6db74">&#34;linux/amd64&#34;</span><span style="color:#f92672">}</span>
+</code></pre></div><p>We also have to enable ephemeral containers through a feature gate - in my examples, I&rsquo;ll be using Minikube.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ minikube config set feature-gates EphemeralContainers<span style="color:#f92672">=</span>true
+❗  These changes will take effect upon a minikube delete and <span style="color:#66d9ef">then</span> a minikube start
+</code></pre></div><p>Once the Minikube cluster is recreated, we&rsquo;re pretty much good to go. Let&rsquo;s create a simple pod and see what can we do.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: simple
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">image</span>: alpine
+    <span style="color:#66d9ef">name</span>: simple
+    <span style="color:#66d9ef">command</span>:
+    - <span style="color:#e6db74">&#34;/bin/sh&#34;</span>
+    - <span style="color:#e6db74">&#34;-c&#34;</span>
+    - <span style="color:#e6db74">&#34;sleep 5000&#34;</span>
+</code></pre></div><p>Save the file as <code>simple.yaml</code> and create the pod inside the cluster.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl apply -f simple.yaml 
+pod/simple created
+</code></pre></div><p>Once the pod is up and running we can hop into it using the debug command. Please remember that the container image might have to download and the whole command might seem stuck for a while (there&rsquo;s no visible indication of the download happening)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl alpha debug -it simple --image<span style="color:#f92672">=</span>ubuntu --target<span style="color:#f92672">=</span>simple --container<span style="color:#f92672">=</span>debug 
+If you don<span style="color:#960050;background-color:#1e0010">&#39;</span>t see a command prompt, try pressing enter. 
+root@simple:/#
+</code></pre></div><p>Let&rsquo;s go through the parameters that we&rsquo;ve passed to this command:</p>
+<ul>
+<li><code>-it</code> might look familliar and for a good reason - those two parameters are responsible for keeping the stdin open and allocating a TTY</li>
+<li><code>--image</code> is the name of an image for the ephemeral container - it doesn&rsquo;t have to match the main container&rsquo;s image; in this example we&rsquo;re using <code>ubuntu</code> even though the main container is running <code>alpine</code></li>
+<li><code>--container</code> is the name of the ephemeral container itself</li>
+<li><code>--target</code> lets the ephemeral container share a process namespace with a container inside the pod - we&rsquo;ll get back to that in a second</li>
+</ul>
+<p>Those params are also reflected in the updated spec of the simple pod in the cluster (the output is trimmed to just show the interesting part)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl get pod simple -o yaml
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">ephemeralContainers</span>:
+  - <span style="color:#66d9ef">image</span>: ubuntu
+    <span style="color:#66d9ef">imagePullPolicy</span>: IfNotPresent
+    <span style="color:#66d9ef">name</span>: debug
+    <span style="color:#66d9ef">resources</span>: {}
+    <span style="color:#66d9ef">stdin</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#66d9ef">targetContainerName</span>: simple
+    <span style="color:#66d9ef">terminationMessagePolicy</span>: File
+    <span style="color:#66d9ef">tty</span>: <span style="color:#66d9ef">true</span>
+</code></pre></div><h2 id="whats-in-thebox">What&rsquo;s in the box?</h2>
+<p>Since we&rsquo;re attached to the debug container, let&rsquo;s have a look around.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">root@simple:/# pwd
+/
+
+root@simple:/# ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+
+root@simple:/# whoami
+root
+
+root@simple:/# cat /etc/*-release
+DISTRIB_ID<span style="color:#f92672">=</span>Ubuntu
+DISTRIB_RELEASE<span style="color:#f92672">=</span>18.04
+DISTRIB_CODENAME<span style="color:#f92672">=</span>bionic
+DISTRIB_DESCRIPTION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Ubuntu 18.04.4 LTS&#34;</span>
+NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Ubuntu&#34;</span>
+VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;18.04.4 LTS (Bionic Beaver)&#34;</span>
+ID<span style="color:#f92672">=</span>ubuntu
+ID_LIKE<span style="color:#f92672">=</span>debian
+PRETTY_NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Ubuntu 18.04.4 LTS&#34;</span>
+VERSION_ID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;18.04&#34;</span>
+HOME_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://www.ubuntu.com/&#34;</span>
+SUPPORT_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://help.ubuntu.com/&#34;</span>
+BUG_REPORT_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://bugs.launchpad.net/ubuntu/&#34;</span>
+PRIVACY_POLICY_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&#34;</span>
+VERSION_CODENAME<span style="color:#f92672">=</span>bionic
+UBUNTU_CODENAME<span style="color:#f92672">=</span>bionic
+</code></pre></div><p>We&rsquo;ve added a new <code>ubuntu</code> container to an existing pod (which was already running an <code>alpine</code> container) on the fly, pretty neat! So what can we do now? Well, for example, we can install and use tools like <code>nslookup</code> to debug and verify the pod networking and network policies.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">root@simple:/# apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get install dnsutils
+
+<span style="color:#f92672">(</span>...<span style="color:#f92672">)</span>
+
+root@simple:/# nslookup google.com 
+Server:  10.96.0.10 Address: 10.96.0.10#53
+Non-authoritative answer:
+Name:	google.com
+Address: 172.217.16.14
+Name:	google.com
+Address: 2a00:1450:401b:804::200e
+</code></pre></div><p>What&rsquo;s a bit more interesting - remember that <code>--target</code> parameter that we&rsquo;ve passed to <code>kubectl alpha debug</code>? If we set its value to the name of our main container, it will share its <a href="https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/">process namespace</a> with the ephemeral container. This means that our <code>debug</code> container sees all processes created by <code>simple</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">root@simple:/# ps aux 
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND 
+root         <span style="color:#ae81ff">1</span>  0.0  0.0   <span style="color:#ae81ff">1568</span>     <span style="color:#ae81ff">4</span> ?        Ss   08:47   0:00 sleep <span style="color:#ae81ff">5000</span> 
+root         <span style="color:#ae81ff">6</span>  0.0  0.0  <span style="color:#ae81ff">18504</span>  <span style="color:#ae81ff">3500</span> pts/0    Ss   08:48   0:00 /bin/bash 
+root       <span style="color:#ae81ff">467</span>  0.0  0.0  <span style="color:#ae81ff">34400</span>  <span style="color:#ae81ff">2904</span> pts/0    R+   08:54   0:00 ps aux
+
+root@simple:/# head -n <span style="color:#ae81ff">3</span> /proc/1/status 
+Name: sleep 
+Umask: <span style="color:#ae81ff">0022</span> 
+State: S <span style="color:#f92672">(</span>sleeping<span style="color:#f92672">)</span>
+</code></pre></div><p>Let&rsquo;s try a different pod - a bit more complex this time around.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: complex
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">image</span>: alpine
+    <span style="color:#66d9ef">name</span>: complex
+    <span style="color:#66d9ef">env</span>:
+    - <span style="color:#66d9ef">name</span>: ENV_FIRST
+      <span style="color:#66d9ef">value</span>: first
+    - <span style="color:#66d9ef">name</span>: ENV_SECOND
+      <span style="color:#66d9ef">value</span>: second
+    <span style="color:#66d9ef">volumeMounts</span>:
+    - <span style="color:#66d9ef">name</span>: my-volume
+      <span style="color:#66d9ef">mountPath</span>: /tmp/fromVolume
+    <span style="color:#66d9ef">command</span>:
+    - <span style="color:#e6db74">&#34;/bin/sh&#34;</span>
+    - <span style="color:#e6db74">&#34;-c&#34;</span>
+    - <span style="color:#e6db74">&#34;echo \&#34;Hello world\&#34; &gt; /tmp/echoed &amp;&amp; echo \&#34;Hello volume\&#34; &gt; /tmp/fromVolume/echoed &amp;&amp; sleep 5000&#34;</span>
+  <span style="color:#66d9ef">volumes</span>:
+  - <span style="color:#66d9ef">name</span>: my-volume
+    <span style="color:#66d9ef">emptyDir</span>: {}
+</code></pre></div><p>Save it as <code>complex.yaml</code> - once it&rsquo;s created, let&rsquo;s jump right into the pod with a new debug container. As before, we can check out the main container processes.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl apply -f complex.yaml 
+pod/complex created
+
+$ kubectl alpha debug -it complex --image<span style="color:#f92672">=</span>ubuntu --target<span style="color:#f92672">=</span>complex --container<span style="color:#f92672">=</span>debug
+If you don<span style="color:#960050;background-color:#1e0010">&#39;</span>t see a command prompt, try pressing enter.
+root@complex:/# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         <span style="color:#ae81ff">1</span>  0.0  0.0   <span style="color:#ae81ff">1568</span>     <span style="color:#ae81ff">4</span> ?        Ss   09:06   0:00 sleep <span style="color:#ae81ff">5000</span>
+root         <span style="color:#ae81ff">6</span>  0.1  0.0  <span style="color:#ae81ff">18504</span>  <span style="color:#ae81ff">3388</span> pts/0    Ss   09:06   0:00 /bin/bash
+root        <span style="color:#ae81ff">16</span>  0.0  0.0  <span style="color:#ae81ff">34400</span>  <span style="color:#ae81ff">2792</span> pts/0    R+   09:06   0:00 ps aux
+</code></pre></div><p>We can peek some of the resources used by that process as well, like files - both those created on the container&rsquo;s ephemeral storage, as well as those created on a volume.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">root@complex:/# head /proc/1/root/tmp/echoed 
+Hello world
+
+root@complex:/# head /proc/1/root/tmp/fromVolume/echoed 
+Hello volume
+</code></pre></div><p>We can also check out the environment variables - the original output isn&rsquo;t too human-friendly, I&rsquo;ve reformatted it here for clarity.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">root@complex:/# head /proc/1/environ 
+KUBERNETES_PORT<span style="color:#f92672">=</span>tcp://10.96.0.1:443
+KUBERNETES_SERVICE_PORT<span style="color:#f92672">=</span><span style="color:#ae81ff">443</span>
+HOSTNAME<span style="color:#f92672">=</span>complex
+ENV_SECOND<span style="color:#f92672">=</span>second
+SHLVL<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+HOME<span style="color:#f92672">=</span>/root
+KUBERNETES_PORT_443_TCP_ADDR<span style="color:#f92672">=</span>10.96.0.1
+PATH<span style="color:#f92672">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+KUBERNETES_PORT_443_TCP_PORT<span style="color:#f92672">=</span><span style="color:#ae81ff">443</span>
+KUBERNETES_PORT_443_TCP_PROTO<span style="color:#f92672">=</span>tcp
+ENV_FIRST<span style="color:#f92672">=</span>first
+KUBERNETES_SERVICE_PORT_HTTPS<span style="color:#f92672">=</span><span style="color:#ae81ff">443</span>
+KUBERNETES_PORT_443_TCP<span style="color:#f92672">=</span>tcp://10.96.0.1:443
+KUBERNETES_SERVICE_HOST<span style="color:#f92672">=</span>10.96.0.1
+PWD<span style="color:#f92672">=</span>/
+</code></pre></div><p>Finally, let&rsquo;s see what happens when the main container inside the pod keeps crashing and restarting - let&rsquo;s simulate this with a simple pod.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: crash
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">image</span>: alpine
+    <span style="color:#66d9ef">name</span>: crash
+    <span style="color:#66d9ef">command</span>:
+    - <span style="color:#e6db74">&#34;/bin/sh&#34;</span>
+    - <span style="color:#e6db74">&#34;-c&#34;</span>
+    - <span style="color:#e6db74">&#34;sleep 3 &amp;&amp; whatisthis&#34;</span>
+</code></pre></div><p>Save this as <code>crash.yaml</code> and create it in the cluster - when we try to attach to the pod inside the container, the command seems to be stuck.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl apply -f crash.yaml 
+pod/crash created
+
+$ kubectl alpha debug -it crash --image ubuntu --target<span style="color:#f92672">=</span>crash --container<span style="color:#f92672">=</span>debug
+</code></pre></div><p>That&rsquo;s actually true, a quick look into the pod describe reveals that our debug container cannot be created, becase the main container isn&rsquo;t running. Does that mean that it&rsquo;s not possible to debug the pod? Au contraire, we can still do it - just without the <code>--target</code> parameter. This still allows us to debug pod networking, for example.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ kubectl alpha debug -it crash --image ubuntu --container<span style="color:#f92672">=</span>debug-no-target 
+If you don<span style="color:#960050;background-color:#1e0010">&#39;</span>t see a command prompt, try pressing enter. 
+root@crash:/# ps aux 
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND 
+root         <span style="color:#ae81ff">1</span>  0.2  0.0  <span style="color:#ae81ff">18504</span>  <span style="color:#ae81ff">3300</span> pts/0    Ss   09:19   0:00 /bin/bash 
+root        <span style="color:#ae81ff">10</span>  0.0  0.0  <span style="color:#ae81ff">34400</span>  <span style="color:#ae81ff">2900</span> pts/0    R+   09:19   0:00 ps aux
+</code></pre></div><h2 id="final-thoughts">Final thoughts</h2>
+<p>While still in it&rsquo;s early stage, <code>kubectl alpha debug</code> shapes up to be a useful and potentially very powerful tool. There are a couple use cases in which it might become really handy. Many of the containers running applications might not even have a shell, which renders <code>kubectl exec</code> unusable - the new debug feature allows for jumping into the pod without needing to change its manifest and recreating it. Even if a shell is available, the application containers most probably don&rsquo;t have all the tools necessary for debugging - and we might not want to install them manually inside a running container. With <code>kubectl alpha debug</code> we can create an kind of a &ldquo;tool belt&rdquo; image containing all the utilities that we use for debugging - and then simple create an ephemeral container in pods that have issues. Possibly it might even be used for attaching remote debuggers to applications running in pods.
+All in all, <code>kubectl alpha debug</code> is a very interesting feature, looking forward to see how it evolves in future releases.</p>
+
+        </article>
+
+        <div id="articleTags" class="section narrow">
+    <div class="article-hero">
+        <p>
+            Posted in:
+            
+            
+                
+                
+                    <a href="http://example.org/tags/kubernetes/">kubernetes</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/kubectl/">kubectl</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/devops/">devops</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/minikube/">minikube</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/containers/">containers</a>
+                
+            
+        </p>
+    </div>
+</div>
+
+
+        
+
+
+
+
+
+    
+    
+    
+
+
+
+
+    
+    
+    
+
+<section id="articleNext" class="section nartrow">
+    <h3 class="footer-next-heading">More articles from icetek.io</h3>
+    <div class="footer-spacer"></div>
+    <div class="next-articles-grid" numberOfArticles={numberOfArticles}>
+        <div class="post-row">
+            
+                <a href="/post/porting-iceci-to-arm/" class="article-link"
+                 id="article-link-bigger">
+                    <div>
+                        <div class="image-container">
+                            <img src="/images/post/arm1.jpeg" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                Porting IceCI to ARM
+                            </h2>
+                            <p class="article-excerpt">
+                                A story of me being silly
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 11 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+                <a href="/post/kubectl-alpha-debug/" class="article-link"
+                >
+                    <div>
+                        <div class="image-container">
+                            <img src="/images/post/kubernetes-1.18.png" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                New in Kubernetes 1.18 - kubectl alpha debug
+                            </h2>
+                            <p class="article-excerpt">
+                                Is it useful? What problems can it help solve?
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 7 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+</section>
+
+    </section>
+
+
+        
+        <div class="footer-gradient"></div>
+    <div class="section narrow">
+      <div class="footer-hr"></div>
+      <div class="footer-container">
+        <div class="footer-text">
+          © 2020 icetek.io
+        </div>
+        <div class="social-icon-outer">
+    <div class="social-icon-container">
+        
+    </div>
+</div>
+    </div>
+</div>
+
+    </div>
+
+    
+    <script src="/js/prism.js"></script>
+</body>
+
+</html>

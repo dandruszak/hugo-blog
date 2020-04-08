@@ -1,0 +1,8 @@
+baseURL: http://example.org/
+languageCode: en-us
+title: icetek.io
+theme: novela
+publishDir: docs
+taxonomies:
+  author: authors
+  tag: tags

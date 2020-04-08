@@ -1,0 +1,309 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/images/favicon.svg">
+    
+    <link rel="stylesheet" href="/scss/custom.min.b645975a3e2c65b6f6bb734702ffc97a11dbc4bb55768ac935a36e9ab05e341e.css">
+    
+    <link rel="stylesheet" href="/css/prism.css" />
+    
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+
+ 
+
+
+
+
+
+
+	
+
+
+
+
+<title>Porting IceCI to ARM | icetek.io</title>
+<meta name="description" content="Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)">
+<meta property="og:title" content="Porting IceCI to ARM | icetek.io">
+<meta property="og:site_name" content="icetek.io">
+<meta property="og:description" content="Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)">
+<meta property="og:url" content="http://example.org/post/porting-iceci-to-arm/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content='http://example.org/images/post/arm1.jpeg'><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Porting IceCI to ARM | icetek.io">
+
+	<link rel="canonical" href="http://example.org/post/porting-iceci-to-arm/">
+
+
+	<meta name="twitter:description" content="Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)">
+<meta name="twitter:image" content="http://example.org/images/post/arm1.jpeg">
+<meta property="article:published_time" content="2020-03-26T00:00:00&#43;00:00">
+	<meta property="article:updated_time" content="2020-03-26T00:00:00&#43;00:00">
+
+
+
+    </head>
+
+
+<body class="line-numbers">
+
+    
+    <script src="/js/initColors.js"></script>
+
+    <div class="layout-styled">
+
+        <Section class="section">
+    <div class="nav-container">
+        <a class="logo-link" href="/">
+            <div id="logo-desktop">
+    <img src="/images/layouts/logo.jpeg" width="192" height="192">
+</div>
+
+            <span class="header-hidden">Navigate back to the homepage</span>
+        </a>
+    </div>
+</Section>
+
+
+        
+
+    <section class="section narrow">
+
+        <section id="articleHero" class="section narrow">
+    <div class="article-hero">
+        <header class="article-header">
+            <h1 class="article-hero-heading">Porting IceCI to ARM</h1>
+            <div class="article-hero-subtitle">
+                <div class="article-meta">
+                    
+
+
+    
+            <a href="/authors/jakub-czaplinski/" class="article-author-link">
+                
+                    <div class="article-author-avatar">
+                        <img src="/images/authors/jakub.jpeg" />
+                    </div>
+                
+                
+                <strong>Jakub Czapliński</strong>
+                
+                <span class="hide-on-mobile">,&nbsp;</span>
+            </a>
+    
+
+
+
+<script src="/js/collapseAuthors.js"></script>
+                    March 26, 2020
+                    • 11 min read
+                </div>
+            </div>
+        </header>
+        
+        <div class="article-hero-image-noshadow" id="ArticleImage__Hero">
+            <img src="/images/post/arm1.jpeg">
+        </div>
+        
+    </div>
+</section>
+
+
+        <article  id="articleContent" class="post-content" style="position:relative;">
+            <h2 id="disclaimer">Disclaimer</h2>
+<p>This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of <a href="https://iceci.io">IceCI</a> on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)</p>
+<h2 id="mindset">Mindset</h2>
+<p>Being a dev that recently mostly writes in Golang and Python I’m kind of used to cloning the sources on a machine and running them. Both Golang and Python have great portability and developers are able to get all the necessary tools to build and run their programs very easily.</p>
+<p>Same goes for Docker. I’m so used to being able to do <code>docker pull</code> and run things that I need, that I often forget which system version I&rsquo;m actually running on my host - it is irrelevant because my image is - for example - <code>debian:10.1</code>.</p>
+<p><img src="/images/post/arm2.jpeg" alt="alt-text" title="The so-called K3s cluster"></p>
+<p>Those combined experiences gave me an idea — a silly one — that we can port IceCI to ARM architecture and run it on one of my Raspberry Pis in just a few commands. I already had a node k3s cluster running for tests, so what can go wrong?</p>
+<p>Seriously I will end up with this one tatooed someday…</p>
+<h2 id="wednesday-10pm">Wednesday ~10PM</h2>
+<p>Wednesday, 10PM after 8h of work and couple of chores — the perfect mindset for engineering!</p>
+<p>To even start I needed to compile the application to ARM architecture. The whole backend is in Golang so cross compilation is built in by default. I just needed to set the proper GOARCH environment variable and I’m good to go. Quick googling with DuckDuckGo — the Raspberry Pi docs say that version 4 is 64bit ARMv8. Perfect!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export GOARCH<span style="color:#f92672">=</span>arm64
+make build
+</code></pre></div><p>And now I’m thinking to myself — ok, this is different architecture, I just need to put it into a different docker image.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export IMG_VER<span style="color:#f92672">=</span>alpha4-arm
+make docker-publish-iceci
+</code></pre></div><p>I have copied and edited the <code>all_in_one.yaml</code> from the <a href="https://github.com/iceci/">IceCI repository</a> and changed the tag to <code>alpha4-arm</code>. Need to <code>kubectl apply</code> it and I&rsquo;m good to go!</p>
+<p>I’m staring at the screen as the images are pulled and the containers are created… a sudden sad realization hits me when I see</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">standard_init_linux.go:211: exec user process caused <span style="color:#e6db74">&#34;exec format error&#34;</span>
+</code></pre></div><p>Well, what about the other things in the container, like nginx? Those should be built for ARM too…</p>
+<p>I never thought too much about how images are made for different architectures, but I quickly looked at Docker Hub and gathered some information. Ok — turns out I can use the <code>arm64v8/debian:10</code> image to build the application for ARM. I copied the docker files with the -arm suffix and changed the <code>FROM</code> clause to <code>FROM arm64v8/debian:10</code></p>
+<p>Another image build run. I run <code>kubectl delete pod --all</code> to delete all the existing pods and wait for the new image versions to download and start.</p>
+<p>I’m staring at the screen and suddenly I see…</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">standard_init_linux.go:211: exec user process caused <span style="color:#e6db74">&#34;exec format error&#34;</span>
+</code></pre></div><p>What?! I’m checking <code>kubectl describe</code> and I see that yes, the new images were pulled.</p>
+<p>Investigation time! I’m logging into the Raspberry with ssh to do a check that I should have done in the first place.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">upgrade@rpi4:~ $ uname -a
+Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:14 GMT 2020 armv7l GNU/Linux</span>
+</code></pre></div><p>&lt;insert random facepalm gif here&gt;</p>
+<p>Ok, a couple of deep breaths — let’s find out what I did wrong. After a quick search it seems, quite reasonably, that Raspbian only supports the 32 bit armv7 build as support the 64 bit one was too much work for them. Fair enough, that’s understandable — they are still doing a massively cool thing with Raspberry Pi and Raspbian.</p>
+<p>So now I’m back to square one. Set the <code>GOARCH=arm</code>, change the <code>FROM arm64v8/debian:10</code> to <code>FROM arm32v7/debian:1</code> and build&hellip; build&hellip; build.. push&hellip; Then of course, as I&rsquo;m impatient <code>kubectl delete pod --all</code></p>
+<p>and….</p>
+<p>SUCCESS!</p>
+<p>I see all pods coming up, so I’m checking which port Traefik is listening on and try accessing the UI. Time to add one of our test pipelines and run it. After adding the repository I’m waiting for the CI to do the first repository event scan, so I can push some changes and trigger a pipeline build. After alt-tabbing to a terminal running k9s with a pod list the smile disappears from my face again. For a second time this evening I have this realization — before I even looked at the logs I knew… I knew that we were using the <code>iceci/utils</code> image which contains Git and other utils to fetch changes from the repo and analize them. And well.. I did not rebuild them for ARM, as they are in a separate repo. So I create branch on my fork of the <code>iceci/docker-images</code> repo and change the <code>FROM</code> in docker file to <code>FROM arm32v7/debian:10</code>, run docker build and&hellip; another facepalm&hellip;</p>
+<p>This time, as I was getting a bit tired, the thought came in slower and more gently. The previous images had just <code>ADD</code>, <code>CMD</code> and <code>EXPOSE</code> operations in docker file. This one has <code>RUN</code>, and I couldn&rsquo;t run ARM based images on my machine for the same reason that I could not run my arm64 images on Raspberry. And another thing - I will need to do some changes in the code. We have been preparing to have all of the image version passed as environment variables, however not all of them were passed to the builder - the component preparing specs for pods.</p>
+<h2 id="thursday--1am">Thursday — ~1AM</h2>
+<p>The builder Raspberry Pi installation has finished.</p>
+<p><img src="/images/post/arm3.jpeg" alt="alt-text" title="Another Raspberry Pi to build the images"></p>
+<p>I made all the necessary changes to the application. I built and pushed both the app and the <code>iceci/utils</code> images.</p>
+<p>Kill all pods…</p>
+<p>Run a pipeline and…. finally!</p>
+<p>‘Hello world’ worked.</p>
+<p>I have setup all secrets and added an example repository with a sample application (which has been created for the purposes of IceCI tutorials). After adding I waited for IceCI to start scanning for Git events, pushed a commit with empty line and waited… again…</p>
+<p>And another fail…</p>
+<p>Well the <em>kaniko</em> image that we use to build Docker images (as of writing this article we had 0.16 and 0.19 was out) does not support ARM builds.</p>
+<p>After short research and a quick test — I found out that we could use <em>buildkit</em> for ARM base pipelines. <em>Buildkit</em> apparently is a little bit less secure so I figured it would be best if we have support for both and continue to use kaniko on x86_64 and use <em>buildkit</em> only on ARM.</p>
+<p>At this point it’s close to 2AM and I’m too tired. I left Ewa and Dominik (my friends, also co-creators of IceCI) some messages with a write-up of the story so far — a bit like what you just read, just with a little bit more swearing. I also asked Dominik to copy/paste the code of our current controller and just change the image building tool from <em>kaniko</em> to <em>buildkit</em>. The plan is that he will do the sin of copy/pasting and adjusting the code, and I’ll pick up and finish the ARM patchwork tomorrow… today evening.</p>
+<h2 id="thursday-10pm">Thursday ~10PM</h2>
+<p>Another night of hacking before me. Little bit more sleep deprived and a little bit less optimistic. As an afterthought of yesterday I have a feeling that something will explode in the application. A feeling that became a prophecy.</p>
+<p>So I have merged Dominik’s changes to my branch. Added if/else statements, as an experienced software enigneer with knowledge of good practices, will do. Looked at the controllers with 99% of the codebase copied over and closed my eyes.</p>
+<p>In my mind, I kept saying to myself “It’s all right, we will refactor this after release”, “Everything will be all right”, “This bad code will be gone soon”.</p>
+<p>I have build the code and images and pushed everything. Killed all the pods, new ones were created. All good. Run the test build. First example passed. Second one failed.</p>
+<p>I knew it won’t be all roses and rainbows.</p>
+<p>After quick debugging session — thank the kubeclient that I can run operator locally and point it to the RPI cluster — and I found that a missing environment variable in the <em>buildkit</em> pod allowed only for couple of commands to be run in Dockerfile. Small update in the code, build, push, kill all pods (it’s beginning to get repetitive and I’m hearing Bender’s “kill all humans” in my head). And finally all is working.</p>
+<p>At this point I know that we have to merge changes, tag everything and make a PR to the docs, but that can be done in the morning. Right now I just need to make a screenshot and paste on slack, do a victory dance (though a low energy and not a convincing one) and go to bed as it is around midnight.</p>
+<h2 id="friday-11am">Friday ~11AM</h2>
+<p>Documentation updated, everything merged, repositories tagged. Small series of tests yet again. Everything is working. Post on LinkedIn done. Post on twitter done. All super cool, except the fact that I still feel like I need a shower. And I just took one 1 hour ago. After my last commit to the repository with code I actually took two showers, but still felt like I need one.</p>
+<p>The more I thought about it the more I saw how many mistakes were made and I decided to write all of this up to share both the story and my thoughts about it.</p>
+<h2 id="the-afterthought--lessons-learned">The afterthought — lessons learned</h2>
+<p>Why share all of this and risk building an image of a person who is chaotic or a bit incompetent? I do strongly believe in devops philosophy and the CALMS principles, and in CALMS the S stands for <em>Sharing</em>. I think that there are a lot of lessons to learn here and I will share my thoughts, and feel free to share your own.</p>
+<p>In both trainer and leader role I always try to encourage people to slow down and think before doing. I talk a lot about “furious activity” and how it can slow down the overall process of development by jumping to conclusions or just randomly changing the code or configuration and immediately testing without taking a second to actually analize properly what is happening. And as you can see, no matter how I’m proud of that approach and how much energy I put into promoting it, I also became the “furious activity” victim. I was so focused on delivering and in my mind it was supposed to be a super quick and easy thing to do, that I was hacking and hacking and hacking… and never hit the breaks and thought — hold on a minute, what am I actually doing? — which I should do after first problem occurred.</p>
+<p>I can’t complain that my evil boss or project manager or any other supervisor forced me to do this and pushed me to my limits as I was that person and all of the blame is on me. I really wanted to push this release on Friday, so that I can play around with it, share with friends and work on other articles in the pipeline over the weekend. Instead, for better of for worse, I actually wrote this one. Right now, after having a good night sleep, I have estimated that this could took around 6 hours of development with proper research. One could say that’s roughly the time I actually spent on it during this hackaton and that is true, however now I have evil copy/paste code in our codebase and some crazy if/else statements to refactor. Oh, and of course I have the images on separate tags which makes the life of IceCI users a bit more painful. Now I know how to release it on the same tag, and I have learned how all of this works with the Docker registry v2.2 manifests. So there is still some work ahead of us because I hacked it like that.</p>
+<p>Another thing is working tired versus being rested. Lately many people talk about reducing the number of work hours and how it can impact productivity. On the opposite side I think lots of people had a job where overtime was a normal thing because people were pushed too deliver on time, even if the deadline or scope changed after planning. I was a part of so many battles where the engineering team talked with the PO/PM and other decision making groups about pushing things to deadlines and the impact of on team and product. And with all that experience I inflicted same thing on myself. I’m happy that in this case it was a feature / release that mainly I was working on and the deadline hit me, but did not had this much of an impact on others. I felt a little bit stupid nonetheless.</p>
+<p>Last but not least — the best way to plan things is to have some kind of research and data to base your plan upon. I did not have any experience with porting things across architectures. I had experience with building Python applications which — by design — had to run on Windows and Linux but never porting things like that. Like I mentioned in the beginning of this article, I based my estimates on a hunch and experience with playing around with Raspberry Pi and using k3s. If I would spend 30 minutes on research I would immediately know what issues I can run into and how to solve them. It’s not that hard, but one has to be in a proper mindset.</p>
+<p>In the future I will try to listen to my own advice.</p>
+
+        </article>
+
+        <div id="articleTags" class="section narrow">
+    <div class="article-hero">
+        <p>
+            Posted in:
+            
+            
+                
+                
+                    <a href="http://example.org/tags/docker/">docker</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/kubernetes/">kubernetes</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/raspberry-pi/">raspberry pi</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/raspbian/">raspbian</a>
+                
+            
+                
+                
+                    <a href="http://example.org/tags/devops/">devops</a>
+                
+            
+        </p>
+    </div>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+    
+    
+    
+
+<section id="articleNext" class="section nartrow">
+    <h3 class="footer-next-heading">More articles from icetek.io</h3>
+    <div class="footer-spacer"></div>
+    <div class="next-articles-grid" numberOfArticles={numberOfArticles}>
+        <div class="post-row">
+            
+                <a href="/post/kubectl-alpha-debug/" class="article-link"
+                 id="article-link-bigger">
+                    <div>
+                        <div class="image-container">
+                            <img src="/images/post/kubernetes-1.18.png" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                New in Kubernetes 1.18 - kubectl alpha debug
+                            </h2>
+                            <p class="article-excerpt">
+                                Is it useful? What problems can it help solve?
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 7 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+                <a href="/post/porting-iceci-to-arm/" class="article-link"
+                >
+                    <div>
+                        <div class="image-container">
+                            <img src="/images/post/arm1.jpeg" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                Porting IceCI to ARM
+                            </h2>
+                            <p class="article-excerpt">
+                                A story of me being silly
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 11 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+</section>
+
+    </section>
+
+
+        
+        <div class="footer-gradient"></div>
+    <div class="section narrow">
+      <div class="footer-hr"></div>
+      <div class="footer-container">
+        <div class="footer-text">
+          © 2020 icetek.io
+        </div>
+        <div class="social-icon-outer">
+    <div class="social-icon-container">
+        
+    </div>
+</div>
+    </div>
+</div>
+
+    </div>
+
+    
+    <script src="/js/prism.js"></script>
+</body>
+
+</html>
