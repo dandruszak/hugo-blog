@@ -2,84 +2,84 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on icetek.io</title>
-    <link>http://example.org/tags/</link>
+    <link>https://dandruszak.github.io/tags/</link>
     <description>Recent content in Tags on icetek.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 31 Mar 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://example.org/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dandruszak.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>containers</title>
-      <link>http://example.org/tags/containers/</link>
+      <link>https://dandruszak.github.io/tags/containers/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/containers/</guid>
+      <guid>https://dandruszak.github.io/tags/containers/</guid>
       <description></description>
     </item>
     
     <item>
       <title>devops</title>
-      <link>http://example.org/tags/devops/</link>
+      <link>https://dandruszak.github.io/tags/devops/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/devops/</guid>
+      <guid>https://dandruszak.github.io/tags/devops/</guid>
       <description></description>
     </item>
     
     <item>
       <title>kubectl</title>
-      <link>http://example.org/tags/kubectl/</link>
+      <link>https://dandruszak.github.io/tags/kubectl/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/kubectl/</guid>
+      <guid>https://dandruszak.github.io/tags/kubectl/</guid>
       <description></description>
     </item>
     
     <item>
       <title>kubernetes</title>
-      <link>http://example.org/tags/kubernetes/</link>
+      <link>https://dandruszak.github.io/tags/kubernetes/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/kubernetes/</guid>
+      <guid>https://dandruszak.github.io/tags/kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>minikube</title>
-      <link>http://example.org/tags/minikube/</link>
+      <link>https://dandruszak.github.io/tags/minikube/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/minikube/</guid>
+      <guid>https://dandruszak.github.io/tags/minikube/</guid>
       <description></description>
     </item>
     
     <item>
       <title>docker</title>
-      <link>http://example.org/tags/docker/</link>
+      <link>https://dandruszak.github.io/tags/docker/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/docker/</guid>
+      <guid>https://dandruszak.github.io/tags/docker/</guid>
       <description></description>
     </item>
     
     <item>
       <title>raspberry pi</title>
-      <link>http://example.org/tags/raspberry-pi/</link>
+      <link>https://dandruszak.github.io/tags/raspberry-pi/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/raspberry-pi/</guid>
+      <guid>https://dandruszak.github.io/tags/raspberry-pi/</guid>
       <description></description>
     </item>
     
     <item>
       <title>raspbian</title>
-      <link>http://example.org/tags/raspbian/</link>
+      <link>https://dandruszak.github.io/tags/raspbian/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tags/raspbian/</guid>
+      <guid>https://dandruszak.github.io/tags/raspbian/</guid>
       <description></description>
     </item>
     

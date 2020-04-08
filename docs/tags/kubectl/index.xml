@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>kubectl on icetek.io</title>
-    <link>http://example.org/tags/kubectl/</link>
+    <link>https://dandruszak.github.io/tags/kubectl/</link>
     <description>Recent content in kubectl on icetek.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 31 Mar 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://example.org/tags/kubectl/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dandruszak.github.io/tags/kubectl/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>New in Kubernetes 1.18 - kubectl alpha debug</title>
-      <link>http://example.org/post/kubectl-alpha-debug/</link>
+      <link>https://dandruszak.github.io/post/kubectl-alpha-debug/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/kubectl-alpha-debug/</guid>
+      <guid>https://dandruszak.github.io/post/kubectl-alpha-debug/</guid>
       <description>Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&amp;rsquo;s take gander at one of the newest additions - kubectl alpha debug. This nifty kubectl feature gives you an additional tool for debugging pods when kubectl exec just doesn&amp;rsquo;t cut it. Most probably your application-hosting containers won&amp;rsquo;t have all the necessary debugging tools - they might not even have a shell.</description>
     </item>
     
