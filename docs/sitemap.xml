@@ -3,82 +3,82 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dandruszak.github.io/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/authors/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/authors/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/containers/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/containers/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/devops/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/devops/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/authors/dominik-andruszak/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/authors/dominik-andruszak/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/kubectl/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/kubectl/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/kubernetes/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/kubernetes/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/minikube/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/minikube/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/post/kubectl-alpha-debug/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/post/kubectl-alpha-debug/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/post/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/post/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/docker/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/docker/</loc>
     <lastmod>2020-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/authors/jakub-czaplinski/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/authors/jakub-czaplinski/</loc>
     <lastmod>2020-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/post/porting-iceci-to-arm/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/post/porting-iceci-to-arm/</loc>
     <lastmod>2020-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/raspberry-pi/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/raspberry-pi/</loc>
     <lastmod>2020-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dandruszak.github.io/tags/raspbian/</loc>
+    <loc>https://dandruszak.github.io/hugo-blog/tags/raspbian/</loc>
     <lastmod>2020-03-26T00:00:00+00:00</lastmod>
   </url>
   

@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="/images/favicon.svg">
     
-    <link rel="stylesheet" href="/scss/custom.min.b645975a3e2c65b6f6bb734702ffc97a11dbc4bb55768ac935a36e9ab05e341e.css">
+    <link rel="stylesheet" href="/hugo-blog/scss/custom.min.b645975a3e2c65b6f6bb734702ffc97a11dbc4bb55768ac935a36e9ab05e341e.css">
     
-    <link rel="stylesheet" href="/css/prism.css" />
+    <link rel="stylesheet" href="/hugo-blog/css/prism.css" />
     
-    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="/hugo-blog/css/fonts.css" />
     
 
  
@@ -30,13 +30,13 @@
 <meta property="og:title" content="Porting IceCI to ARM | icetek.io">
 <meta property="og:site_name" content="icetek.io">
 <meta property="og:description" content="Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)">
-<meta property="og:url" content="https://dandruszak.github.io/post/porting-iceci-to-arm/">
+<meta property="og:url" content="https://dandruszak.github.io/hugo-blog/post/porting-iceci-to-arm/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content='https://dandruszak.github.io/images/post/arm1.jpeg'><meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Porting IceCI to ARM | icetek.io">
 
-	<link rel="canonical" href="https://dandruszak.github.io/post/porting-iceci-to-arm/">
+	<link rel="canonical" href="https://dandruszak.github.io/hugo-blog/post/porting-iceci-to-arm/">
 
 
 	<meta name="twitter:description" content="Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)">
@@ -52,7 +52,7 @@
 <body class="line-numbers">
 
     
-    <script src="/js/initColors.js"></script>
+    <script src="/hugo-blog/js/initColors.js"></script>
 
     <div class="layout-styled">
 
@@ -83,7 +83,7 @@
 
 
     
-            <a href="/authors/jakub-czaplinski/" class="article-author-link">
+            <a href="/hugo-blog/authors/jakub-czaplinski/" class="article-author-link">
                 
                     <div class="article-author-avatar">
                         <img src="/images/authors/jakub.jpeg" />
@@ -98,7 +98,7 @@
 
 
 
-<script src="/js/collapseAuthors.js"></script>
+<script src="/hugo-blog/js/collapseAuthors.js"></script>
                     March 26, 2020
                     • 11 min read
                 </div>
@@ -118,7 +118,7 @@
 <p>This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of <a href="https://iceci.io">IceCI</a> on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)</p>
 <h2 id="mindset">Mindset</h2>
 <p>Being a dev that recently mostly writes in Golang and Python I’m kind of used to cloning the sources on a machine and running them. Both Golang and Python have great portability and developers are able to get all the necessary tools to build and run their programs very easily.</p>
-<p>Same goes for Docker. I’m so used to being able to do <code>docker pull</code> and run things that I need, that I often forget which system version I&rsquo;m actually running on my host - it is irrelevant because my image is - for example - <code>debian:10.1</code>.</p>
+<p>Same goes for Docker. I’m so used to being able to do <code>docker pull</code> and run things that I need, that I often forget which system version I'm actually running on my host - it is irrelevant because my image is - for example - <code>debian:10.1</code>.</p>
 <p><img src="/images/post/arm2.jpeg" alt="alt-text" title="The so-called K3s cluster"></p>
 <p>Those combined experiences gave me an idea — a silly one — that we can port IceCI to ARM architecture and run it on one of my Raspberry Pis in just a few commands. I already had a node k3s cluster running for tests, so what can go wrong?</p>
 <p>Seriously I will end up with this one tatooed someday…</p>
@@ -130,7 +130,7 @@ make build
 </code></pre></div><p>And now I’m thinking to myself — ok, this is different architecture, I just need to put it into a different docker image.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export IMG_VER<span style="color:#f92672">=</span>alpha4-arm
 make docker-publish-iceci
-</code></pre></div><p>I have copied and edited the <code>all_in_one.yaml</code> from the <a href="https://github.com/iceci/">IceCI repository</a> and changed the tag to <code>alpha4-arm</code>. Need to <code>kubectl apply</code> it and I&rsquo;m good to go!</p>
+</code></pre></div><p>I have copied and edited the <code>all_in_one.yaml</code> from the <a href="https://github.com/iceci/">IceCI repository</a> and changed the tag to <code>alpha4-arm</code>. Need to <code>kubectl apply</code> it and I'm good to go!</p>
 <p>I’m staring at the screen as the images are pulled and the containers are created… a sudden sad realization hits me when I see</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">standard_init_linux.go:211: exec user process caused <span style="color:#e6db74">&#34;exec format error&#34;</span>
 </code></pre></div><p>Well, what about the other things in the container, like nginx? Those should be built for ARM too…</p>
@@ -144,11 +144,11 @@ make docker-publish-iceci
 Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:14 GMT 2020 armv7l GNU/Linux</span>
 </code></pre></div><p>&lt;insert random facepalm gif here&gt;</p>
 <p>Ok, a couple of deep breaths — let’s find out what I did wrong. After a quick search it seems, quite reasonably, that Raspbian only supports the 32 bit armv7 build as support the 64 bit one was too much work for them. Fair enough, that’s understandable — they are still doing a massively cool thing with Raspberry Pi and Raspbian.</p>
-<p>So now I’m back to square one. Set the <code>GOARCH=arm</code>, change the <code>FROM arm64v8/debian:10</code> to <code>FROM arm32v7/debian:1</code> and build&hellip; build&hellip; build.. push&hellip; Then of course, as I&rsquo;m impatient <code>kubectl delete pod --all</code></p>
+<p>So now I’m back to square one. Set the <code>GOARCH=arm</code>, change the <code>FROM arm64v8/debian:10</code> to <code>FROM arm32v7/debian:1</code> and build&hellip; build&hellip; build.. push&hellip; Then of course, as I'm impatient <code>kubectl delete pod --all</code></p>
 <p>and….</p>
 <p>SUCCESS!</p>
 <p>I see all pods coming up, so I’m checking which port Traefik is listening on and try accessing the UI. Time to add one of our test pipelines and run it. After adding the repository I’m waiting for the CI to do the first repository event scan, so I can push some changes and trigger a pipeline build. After alt-tabbing to a terminal running k9s with a pod list the smile disappears from my face again. For a second time this evening I have this realization — before I even looked at the logs I knew… I knew that we were using the <code>iceci/utils</code> image which contains Git and other utils to fetch changes from the repo and analize them. And well.. I did not rebuild them for ARM, as they are in a separate repo. So I create branch on my fork of the <code>iceci/docker-images</code> repo and change the <code>FROM</code> in docker file to <code>FROM arm32v7/debian:10</code>, run docker build and&hellip; another facepalm&hellip;</p>
-<p>This time, as I was getting a bit tired, the thought came in slower and more gently. The previous images had just <code>ADD</code>, <code>CMD</code> and <code>EXPOSE</code> operations in docker file. This one has <code>RUN</code>, and I couldn&rsquo;t run ARM based images on my machine for the same reason that I could not run my arm64 images on Raspberry. And another thing - I will need to do some changes in the code. We have been preparing to have all of the image version passed as environment variables, however not all of them were passed to the builder - the component preparing specs for pods.</p>
+<p>This time, as I was getting a bit tired, the thought came in slower and more gently. The previous images had just <code>ADD</code>, <code>CMD</code> and <code>EXPOSE</code> operations in docker file. This one has <code>RUN</code>, and I couldn't run ARM based images on my machine for the same reason that I could not run my arm64 images on Raspberry. And another thing - I will need to do some changes in the code. We have been preparing to have all of the image version passed as environment variables, however not all of them were passed to the builder - the component preparing specs for pods.</p>
 <h2 id="thursday--1am">Thursday — ~1AM</h2>
 <p>The builder Raspberry Pi installation has finished.</p>
 <p><img src="/images/post/arm3.jpeg" alt="alt-text" title="Another Raspberry Pi to build the images"></p>
@@ -190,27 +190,27 @@ Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:1
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/docker/">docker</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/docker/">docker</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/kubernetes/">kubernetes</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/kubernetes/">kubernetes</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/raspberry-pi/">raspberry pi</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/raspberry-pi/">raspberry pi</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/raspbian/">raspbian</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/raspbian/">raspbian</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/devops/">devops</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/devops/">devops</a>
                 
             
         </p>
@@ -237,7 +237,7 @@ Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:1
     <div class="next-articles-grid" numberOfArticles={numberOfArticles}>
         <div class="post-row">
             
-                <a href="/post/kubectl-alpha-debug/" class="article-link"
+                <a href="/hugo-blog/post/kubectl-alpha-debug/" class="article-link"
                  id="article-link-bigger">
                     <div>
                         <div class="image-container">
@@ -257,7 +257,7 @@ Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:1
                     </div>
                 </a>
             
-                <a href="/post/porting-iceci-to-arm/" class="article-link"
+                <a href="/hugo-blog/post/porting-iceci-to-arm/" class="article-link"
                 >
                     <div>
                         <div class="image-container">
@@ -303,7 +303,7 @@ Linux rpi4 4.19.97-v7l+ <span style="color:#75715e">#1294 SMP Thu Jan 30 13:21:1
     </div>
 
     
-    <script src="/js/prism.js"></script>
+    <script src="/hugo-blog/js/prism.js"></script>
 </body>
 
 </html>
