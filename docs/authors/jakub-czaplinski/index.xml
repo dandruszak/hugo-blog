@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jakub Czapliński on icetek.io</title>
-    <link>https://dandruszak.github.io/authors/jakub-czaplinski/</link>
+    <link>https://dandruszak.github.io/hugo-blog/authors/jakub-czaplinski/</link>
     <description>Recent content in Jakub Czapliński on icetek.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 26 Mar 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://dandruszak.github.io/authors/jakub-czaplinski/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dandruszak.github.io/hugo-blog/authors/jakub-czaplinski/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Porting IceCI to ARM</title>
-      <link>https://dandruszak.github.io/post/porting-iceci-to-arm/</link>
+      <link>https://dandruszak.github.io/hugo-blog/post/porting-iceci-to-arm/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/post/porting-iceci-to-arm/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/post/porting-iceci-to-arm/</guid>
       <description>Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)</description>
     </item>
     
