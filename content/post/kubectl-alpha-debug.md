@@ -2,7 +2,7 @@
 title: "New in Kubernetes 1.18 - kubectl alpha debug"
 date: 2020-03-31
 draft: false 
-hero: "/images/post/kubernetes-1.18.png"
+hero: "./images/post/kubernetes-1.18.png"
 excerpt: Is it useful? What problems can it help solve?
 authors:
   - Dominik Andruszak
