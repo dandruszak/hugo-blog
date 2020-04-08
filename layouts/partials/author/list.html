@@ -1,0 +1,21 @@
+<section class="section nartrow author-alc-section">
+    <div id="articlesList" class="articles-list-container">
+        <p>
+            {{ range site.Taxonomies.authors }}
+                {{ with .Page }}
+                    <div class="author-hero">
+                            <div class="author-hero-image">
+                                <a href="{{ .Permalink }}">
+                                    <img src="{{ .Params.avatar }}" />
+                                </a>
+                            </div>
+                        <a href="{{ .Permalink }}">
+                            <h1 class="author-heading">{{ .Title }}</h1>
+                        </a>
+                        <p class="author-subheading">{{ .Params.bio }}</p>
+                    </div>
+                {{ end }}
+            {{ end }}
+        </p>
+    </div>
+</section>

@@ -1,10 +1,13 @@
 {{ define "main" }}
     <section class="section narrow">
         <section>
-            {{ partial "tags/hero.html" . }}
-            {{ partial "author/articles_list.html" . }}
+            {{ if (eq .Page.Kind "taxonomyTerm") }}
+                {{ partial "tags/hero_list.html" . }}
+                {{ partial "tags/list.html" . }}
+            {{ else }}
+                {{ partial "tags/hero.html" . }}
+                {{ partial "author/articles_list.html" . }}
+            {{ end }}
         </section>
-        <div class="authors-gradient"></div>
     </section>
-
 {{ end }}

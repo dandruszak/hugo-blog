@@ -1,12 +1,11 @@
 <div id="articleTags" class="section narrow">
     <div class="article-hero">
         <p>
-            Posted in:
             {{ $taxo := "tags" }}
             {{ range .Param $taxo }}
                 {{ $name := . }}
                 {{ with $.Site.GetPage (printf "/%s/%s" $taxo ($name | urlize)) }}
-                    <a href="{{ .Permalink }}">{{ $name }}</a>
+                    <a href="{{ .Permalink }}" class="article-hero-tag">{{ $name }}</a>
                 {{ end }}
             {{ end }}
         </p>

@@ -1,0 +1,14 @@
+{{ define "main" }}
+<section class="section narrow">
+    <section>
+        {{ if (eq .Page.Kind "taxonomyTerm") }}
+            {{ partial "author/hero_list.html" . }}
+            {{ partial "author/list.html" . }}
+        {{ else }}
+            {{ partial "author/hero.html" . }}
+            {{ partial "author/articles_list.html" . }}
+        {{ end }}
+    </section>
+</section>
+
+{{ end }}

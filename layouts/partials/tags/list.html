@@ -1,0 +1,12 @@
+<section class="section nartrow author-alc-section">
+  <div id="articlesList" class="articles-list-container">
+      <p>
+          {{ $tags := .Pages }}
+          {{ $paginator := .Paginate .Pages }}
+          {{ range $index, $article := $paginator.Pages }}
+
+            <a href="{{ .Permalink }}" class="article-hero-tag zoomed">{{ .Params.Title }}</a>
+          {{ end }}
+      </p>
+  </div>
+</section>
