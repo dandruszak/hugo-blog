@@ -2,7 +2,7 @@
 title: Jakub Czapliński
 bio: |
   CEO, Co-founder, Cloud Solution Architect at Icetek
-avatar: /images/authors/jakub.jpeg
+avatar: ./images/authors/jakub.jpeg
 featured: false
 social:
   - title: github

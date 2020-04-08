@@ -2,7 +2,7 @@
 title: Dominik Andruszak
 bio: |
   Co-founder, Software and DevOps Engineer at Icetek 
-avatar: /images/authors/dominik.png
+avatar: ./images/authors/dominik.png
 featured: false
 social:
   - title: github
