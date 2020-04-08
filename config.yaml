@@ -1,4 +1,4 @@
-baseURL: https://dandruszak.github.io/hugo-blog/
+baseURL: https://dandruszak.github.io/
 languageCode: en-us
 title: icetek.io
 theme: novela
@@ -6,3 +6,7 @@ publishDir: docs
 taxonomies:
   author: authors
   tag: tags
+social:
+  linkedin: https://www.linkedin.com/company/icetek
+  github: https://github.com/icetekio
+  twitter: https://twitter.com/icetekio
