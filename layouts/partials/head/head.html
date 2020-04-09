@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {{ $favicon := resources.Get "favicon.svg" }}
+    {{ $favicon := resources.Get "favicon.png" }}
     <link rel="icon" href="{{ $favicon.RelPermalink }}">
     {{ $style := resources.Get "scss/custom.scss" | toCSS | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
