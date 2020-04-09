@@ -1,6 +1,6 @@
 baseURL: https://dandruszak.github.io/hugo-blog/
 languageCode: en-us
-title: icetek.io
+title: blog.icetek.io
 theme: novela
 publishDir: docs
 taxonomies:
