@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kubernetes on icetek.io</title>
-    <link>https://dandruszak.github.io/tags/kubernetes/</link>
+    <link>https://dandruszak.github.io/hugo-blog/tags/kubernetes/</link>
     <description>Recent content in Kubernetes on icetek.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 09 Apr 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://dandruszak.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dandruszak.github.io/hugo-blog/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Building a Kubernetes cluster of Raspberry Pi running Ubuntu server</title>
-      <link>https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/</link>
+      <link>https://dandruszak.github.io/hugo-blog/post/2020-04-09-cluster-on-rpi/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/post/2020-04-09-cluster-on-rpi/</guid>
       <description>In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
 Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.</description>
     </item>
     
     <item>
       <title>New in Kubernetes 1.18 - kubectl alpha debug</title>
-      <link>https://dandruszak.github.io/post/2020-03-31-kubectl-alpha-debug/</link>
+      <link>https://dandruszak.github.io/hugo-blog/post/2020-03-31-kubectl-alpha-debug/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/post/2020-03-31-kubectl-alpha-debug/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/post/2020-03-31-kubectl-alpha-debug/</guid>
       <description>Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let&#39;s take gander at one of the newest additions - kubectl alpha debug. This nifty kubectl feature gives you an additional tool for debugging pods when kubectl exec just doesn&#39;t cut it. Most probably your application-hosting containers won&#39;t have all the necessary debugging tools - they might not even have a shell.</description>
     </item>
     
     <item>
       <title>Porting IceCI to ARM</title>
-      <link>https://dandruszak.github.io/post/2020-03-26-porting-iceci-to-arm/</link>
+      <link>https://dandruszak.github.io/hugo-blog/post/2020-03-26-porting-iceci-to-arm/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/post/2020-03-26-porting-iceci-to-arm/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/post/2020-03-26-porting-iceci-to-arm/</guid>
       <description>Disclaimer This is not a tutorial. It’s a story with a sort of a happy ending and a lesson to learn. When we will finish testing of IceCI on various ARM based machines and tidy up after the “hack to test” solution in the next release we will prepare a separate article with a tutorial and a lot of technical facts regarding the preparation of cross architecture products. But for now — have fun and laugh a bit :)</description>
     </item>
     

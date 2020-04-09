@@ -2,111 +2,111 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on icetek.io</title>
-    <link>https://dandruszak.github.io/tags/</link>
+    <link>https://dandruszak.github.io/hugo-blog/tags/</link>
     <description>Recent content in Tags on icetek.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 09 Apr 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://dandruszak.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dandruszak.github.io/hugo-blog/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Edge Computing</title>
-      <link>https://dandruszak.github.io/tags/edge-computing/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/edge-computing/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/edge-computing/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/edge-computing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kubernetes</title>
-      <link>https://dandruszak.github.io/tags/kubernetes/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/kubernetes/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/kubernetes/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Raspberry Pi</title>
-      <link>https://dandruszak.github.io/tags/raspberry-pi/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/raspberry-pi/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/raspberry-pi/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/raspberry-pi/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tutorial</title>
-      <link>https://dandruszak.github.io/tags/tutorial/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/tutorial/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/tutorial/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/tutorial/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ubuntu</title>
-      <link>https://dandruszak.github.io/tags/ubuntu/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/ubuntu/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/ubuntu/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/ubuntu/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Containers</title>
-      <link>https://dandruszak.github.io/tags/containers/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/containers/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/containers/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/containers/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Devops</title>
-      <link>https://dandruszak.github.io/tags/devops/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/devops/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/devops/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/devops/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kubectl</title>
-      <link>https://dandruszak.github.io/tags/kubectl/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/kubectl/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/kubectl/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/kubectl/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Minikube</title>
-      <link>https://dandruszak.github.io/tags/minikube/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/minikube/</link>
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/minikube/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/minikube/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Docker</title>
-      <link>https://dandruszak.github.io/tags/docker/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/docker/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/docker/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/docker/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Raspbian</title>
-      <link>https://dandruszak.github.io/tags/raspbian/</link>
+      <link>https://dandruszak.github.io/hugo-blog/tags/raspbian/</link>
       <pubDate>Thu, 26 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://dandruszak.github.io/tags/raspbian/</guid>
+      <guid>https://dandruszak.github.io/hugo-blog/tags/raspbian/</guid>
       <description></description>
     </item>
     

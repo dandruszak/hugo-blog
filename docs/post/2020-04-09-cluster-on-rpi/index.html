@@ -1,18 +1,18 @@
 <html>
 
 <head>
-    <base href="https://dandruszak.github.io/">
+    <base href="https://dandruszak.github.io/hugo-blog/">
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <link rel="icon" href="/favicon.svg">
+    <link rel="icon" href="/hugo-blog/favicon.svg">
     
-    <link rel="stylesheet" href="/scss/custom.min.31f084f2ee4aa6c09088fdaa4a2ad4b04722482c5d68856969526bdc7da0eaa8.css">
+    <link rel="stylesheet" href="/hugo-blog/scss/custom.min.31f084f2ee4aa6c09088fdaa4a2ad4b04722482c5d68856969526bdc7da0eaa8.css">
     
-    <link rel="stylesheet" href="/css/prism.css" />
+    <link rel="stylesheet" href="/hugo-blog/css/prism.css" />
     
-    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="/hugo-blog/css/fonts.css" />
     
 
  
@@ -34,13 +34,13 @@ Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect
 <meta property="og:site_name" content="icetek.io">
 <meta property="og:description" content="In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
 Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.">
-<meta property="og:url" content="https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/">
+<meta property="og:url" content="https://dandruszak.github.io/hugo-blog/post/2020-04-09-cluster-on-rpi/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content='https://dandruszak.github.io/images/post/2020-04/k8s-rpi-1.jpeg'><meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content='https://dandruszak.github.io/hugo-blog/images/post/2020-04/k8s-rpi-1.jpeg'><meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Building a Kubernetes cluster of Raspberry Pi running Ubuntu server | icetek.io">
 
-	<link rel="canonical" href="https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/">
+	<link rel="canonical" href="https://dandruszak.github.io/hugo-blog/post/2020-04-09-cluster-on-rpi/">
 
 
 	<meta name="twitter:site" content="@https://twitter.com/icetekio">
@@ -48,7 +48,7 @@ Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect
 
 	<meta name="twitter:description" content="In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
 Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.">
-<meta name="twitter:image" content="https://dandruszak.github.io/images/post/2020-04/k8s-rpi-1.jpeg">
+<meta name="twitter:image" content="https://dandruszak.github.io/hugo-blog/images/post/2020-04/k8s-rpi-1.jpeg">
 <meta property="article:published_time" content="2020-04-09T00:00:00&#43;00:00">
 	<meta property="article:updated_time" content="2020-04-09T00:00:00&#43;00:00">
 
@@ -60,13 +60,13 @@ Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect
 <body class="line-numbers">
 
     
-    <script src="/js/initColors.js"></script>
+    <script src="/hugo-blog/js/initColors.js"></script>
 
     <div class="layout-styled">
 
         <Section class="section">
     <div class="nav-container">
-        <a class="logo-link" href="https://dandruszak.github.io/">
+        <a class="logo-link" href="https://dandruszak.github.io/hugo-blog/">
             <div id="logo-desktop">
     <img src="images/layouts/logo.jpeg" width="192" height="192">
 </div>
@@ -91,7 +91,7 @@ Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect
 
 
     
-            <a href="/authors/jakub-czaplinski/" class="article-author-link">
+            <a href="/hugo-blog/authors/jakub-czaplinski/" class="article-author-link">
                 
                     <div class="article-author-avatar">
                         <img src="./images/authors/jakub.jpeg" />
@@ -106,7 +106,7 @@ Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect
 
 
 
-<script src="/js/collapseAuthors.js"></script>
+<script src="/hugo-blog/js/collapseAuthors.js"></script>
                     April 9, 2020
                     • 13 min read
                 </div>
@@ -396,27 +396,27 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/kubernetes/" class="article-hero-tag">Kubernetes</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/kubernetes/" class="article-hero-tag">Kubernetes</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/raspberry-pi/" class="article-hero-tag">Raspberry Pi</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/raspberry-pi/" class="article-hero-tag">Raspberry Pi</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/ubuntu/" class="article-hero-tag">Ubuntu</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/ubuntu/" class="article-hero-tag">Ubuntu</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/edge-computing/" class="article-hero-tag">Edge Computing</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/edge-computing/" class="article-hero-tag">Edge Computing</a>
                 
             
                 
                 
-                    <a href="https://dandruszak.github.io/tags/tutorial/" class="article-hero-tag">Tutorial</a>
+                    <a href="https://dandruszak.github.io/hugo-blog/tags/tutorial/" class="article-hero-tag">Tutorial</a>
                 
             
         </p>
@@ -445,7 +445,7 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
     <div class="next-articles-grid" numberOfArticles={numberOfArticles}>
         <div class="post-row">
             
-                <a href="/post/2020-03-31-kubectl-alpha-debug/" class="article-link"
+                <a href="/hugo-blog/post/2020-03-31-kubectl-alpha-debug/" class="article-link"
                  id="article-link-bigger">
                     <div>
                         <div class="image-container-noshadow">
@@ -465,7 +465,7 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
                     </div>
                 </a>
             
-                <a href="/post/2020-03-26-porting-iceci-to-arm/" class="article-link"
+                <a href="/hugo-blog/post/2020-03-26-porting-iceci-to-arm/" class="article-link"
                 >
                     <div>
                         <div class="image-container-noshadow">
@@ -576,7 +576,7 @@ xmlns="http://www.w3.org/2000/svg"
     </div>
 
     
-    <script src="/js/prism.js"></script>
+    <script src="/hugo-blog/js/prism.js"></script>
 </body>
 
 </html>
