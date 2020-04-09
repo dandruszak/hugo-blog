@@ -2,16 +2,16 @@
 title: "Porting IceCI to ARM"
 date: 2020-03-26
 draft: false 
-hero: "./images/post/arm1.jpeg"
+hero: "./images/post/2020-03/arm1.jpeg"
 excerpt: A story of me being silly
 authors:
   - Jakub Czaplinski
 tags:
-  - docker
-  - kubernetes
-  - raspberry pi
-  - raspbian
-  - devops
+  - Docker
+  - Kubernetes
+  - Raspberry Pi
+  - Raspbian
+  - Devops
 ---
 
 ## Disclaimer
@@ -24,7 +24,7 @@ Being a dev that recently mostly writes in Golang and Python I’m kind of used 
 
 Same goes for Docker. I’m so used to being able to do `docker pull` and run things that I need, that I often forget which system version I'm actually running on my host - it is irrelevant because my image is - for example - `debian:10.1`.
 
-![alt-text](./images/post/arm2.jpeg "The so-called K3s cluster")
+{{<post_image src="./images/post/2020-03/arm2.jpeg" caption="The so-called K3s cluster">}}
 
 Those combined experiences gave me an idea — a silly one — that we can port IceCI to ARM architecture and run it on one of my Raspberry Pis in just a few commands. I already had a node k3s cluster running for tests, so what can go wrong?
 
@@ -95,8 +95,7 @@ This time, as I was getting a bit tired, the thought came in slower and more gen
 
 The builder Raspberry Pi installation has finished.
 
-![alt-text](./images/post/arm3.jpeg "Another Raspberry Pi to build the images")
-
+{{<post_image src="./images/post/2020-03/arm3.jpeg" caption="Another Raspberry Pi to build the images">}}
 
 I made all the necessary changes to the application. I built and pushed both the app and the `iceci/utils` images.
 

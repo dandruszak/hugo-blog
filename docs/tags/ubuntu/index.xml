@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ubuntu on icetek.io</title>
+    <link>https://dandruszak.github.io/tags/ubuntu/</link>
+    <description>Recent content in Ubuntu on icetek.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://dandruszak.github.io/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Building a Kubernetes cluster of Raspberry Pi running Ubuntu server</title>
+      <link>https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/</guid>
+      <description>In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
+Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.</description>
+    </item>
+    
+  </channel>
+</rss>

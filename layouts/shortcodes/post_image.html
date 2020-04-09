@@ -1,0 +1,11 @@
+<div class="article-hero-image-noshadow">
+    <figure {{ with .Get "class" }}class="{{.}}"{{ end }}>
+        <img src="{{ .Get "src" }}" alt="{{ .Get "caption" }}"/>
+        {{ if (.Get "caption")}}
+            <figcaption>
+                    <p class="article-caption">{{ .Get "caption" }}</p>
+            </figcaption>
+        {{ end }}
+    </figure>
+
+</div>

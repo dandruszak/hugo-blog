@@ -1,0 +1,582 @@
+<html>
+
+<head>
+    <base href="https://dandruszak.github.io/">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="icon" href="/favicon.svg">
+    
+    <link rel="stylesheet" href="/scss/custom.min.31f084f2ee4aa6c09088fdaa4a2ad4b04722482c5d68856969526bdc7da0eaa8.css">
+    
+    <link rel="stylesheet" href="/css/prism.css" />
+    
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+
+ 
+
+
+
+
+
+
+	
+
+
+
+
+<title>Building a Kubernetes cluster of Raspberry Pi running Ubuntu server | icetek.io</title>
+<meta name="description" content="In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
+Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.">
+<meta property="og:title" content="Building a Kubernetes cluster of Raspberry Pi running Ubuntu server | icetek.io">
+<meta property="og:site_name" content="icetek.io">
+<meta property="og:description" content="In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
+Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.">
+<meta property="og:url" content="https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content='https://dandruszak.github.io/images/post/2020-04/k8s-rpi-1.jpeg'><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Building a Kubernetes cluster of Raspberry Pi running Ubuntu server | icetek.io">
+
+	<link rel="canonical" href="https://dandruszak.github.io/post/2020-04-09-cluster-on-rpi/">
+
+
+	<meta name="twitter:site" content="@https://twitter.com/icetekio">
+	<meta name="twitter:creator" content="@https://twitter.com/icetekio">
+
+	<meta name="twitter:description" content="In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.
+Why should anyone bother? With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver.">
+<meta name="twitter:image" content="https://dandruszak.github.io/images/post/2020-04/k8s-rpi-1.jpeg">
+<meta property="article:published_time" content="2020-04-09T00:00:00&#43;00:00">
+	<meta property="article:updated_time" content="2020-04-09T00:00:00&#43;00:00">
+
+
+
+    </head>
+
+
+<body class="line-numbers">
+
+    
+    <script src="/js/initColors.js"></script>
+
+    <div class="layout-styled">
+
+        <Section class="section">
+    <div class="nav-container">
+        <a class="logo-link" href="https://dandruszak.github.io/">
+            <div id="logo-desktop">
+    <img src="images/layouts/logo.jpeg" width="192" height="192">
+</div>
+
+            <span class="header-hidden">Navigate back to the homepage</span>
+        </a>
+    </div>
+</Section>
+
+
+        
+
+    <section class="section narrow">
+
+        <section id="articleHero" class="section narrow">
+    <div class="article-hero">
+        <header class="article-header">
+            <h1 class="article-hero-heading">Building a Kubernetes cluster of Raspberry Pi running Ubuntu server</h1>
+            <div class="article-hero-subtitle">
+                <div class="article-meta">
+                    
+
+
+    
+            <a href="/authors/jakub-czaplinski/" class="article-author-link">
+                
+                    <div class="article-author-avatar">
+                        <img src="./images/authors/jakub.jpeg" />
+                    </div>
+                
+                
+                <strong>Jakub Czapliński</strong>
+                
+                <span class="hide-on-mobile">,&nbsp;</span>
+            </a>
+    
+
+
+
+<script src="/js/collapseAuthors.js"></script>
+                    April 9, 2020
+                    • 13 min read
+                </div>
+            </div>
+        </header>
+        
+        <div class="article-hero-image-noshadow" id="ArticleImage__Hero">
+            <img src="./images/post/2020-04/k8s-rpi-1.jpeg">
+        </div>
+        
+    </div>
+</section>
+
+
+        <article  id="articleContent" class="post-content" style="position:relative;">
+            <p>In this article I will show how to set up a small Kubernetes cluster running on one or more Raspberry Pi 3/4 running Ubuntu 18.04. I chose Ubuntu server because it comes with 64bit and 32bit versions and I needed both type of nodes for my home cluster.</p>
+<h2 id="why-should-anyone-bother">Why should anyone bother?</h2>
+<p>With low-energy consumption, Raspberry Pi is a perfect candidate for a machine that will run 24/7. When learning or developing for Kubernetes sometimes a persistent environment is a time saver. K3s, on the other hand, is a smaller, easier to set up flavor of Kubernetes that is fully compatible, but stripped down from unneeded features that are behind feature gates and by default disabled on most of the installations.</p>
+<h2 id="who-is-it-for">Who is it for?</h2>
+<p>This tutorial does not require any practical experience with Kubernetes or its installation process. It is written in a way that someone who is starting their adventure with Kubernetes should be able to deploy it and start learning.</p>
+<h2 id="what-do-we-need">What do we need</h2>
+<p>To do everything shown in this tutorial you will need:</p>
+<ul>
+<li>1 or 2 Raspberry Pi (version 3 or 4)</li>
+<li>1 or 2 micro SD cards — the faster the better</li>
+<li>Power supplies for the Raspberry Pi</li>
+<li>Software for writing disk images — more information can be found <a href="https://ubuntu.com/tutorials/tutorial-create-a-usb-stick-on-ubuntu#1-overview">here</a></li>
+<li>Ubuntu Raspberry Pi images found <a href="https://ubuntu.com/download/raspberry-pi">here</a></li>
+<li>K3sup — a great tool for simplifying installation of K3s — you can find it <a href="https://github.com/alexellis/k3sup">here</a></li>
+<li>30 minutes of your precious time</li>
+<li>Coffee or other drink</li>
+</ul>
+<h2 id="plan">Plan</h2>
+<p>What we will do — with optional steps:</p>
+<ul>
+<li>Prepare SD cards and SSH keys</li>
+<li>Setup Ubuntu server 18.04 for K3s installation</li>
+<li>Disable unnecessary services (optional)</li>
+<li>Bootstrap K3s cluster</li>
+<li>Join second node (optional)</li>
+<li>Test K3s cluster</li>
+<li>Dance the “victory dance” (optional)</li>
+</ul>
+<h2 id="preparing-for-the-installation">Preparing for the installation</h2>
+<div class="article-hero-image-noshadow">
+    <figure >
+        <img src="./images/post/2020-04/k8s-rpi-2.jpeg" alt="Installing Ubuntu server on SD card"/>
+        
+            <figcaption>
+                    <p class="article-caption">Installing Ubuntu server on SD card</p>
+            </figcaption>
+        
+    </figure>
+
+</div>
+
+<p>Before we begin the installation we need two things. First, we need to prepare SD cards with Ubuntu server 18.04. The images can be downloaded from here. Instructions on how to prepare a bootable SD card from those images can be found <a href="https://ubuntu.com/tutorials/tutorial-create-a-usb-stick-on-ubuntu#1-overview">here</a>.</p>
+<p>Next, we need to create SSH keys for k3sup, so we’ll be able to install K3s on a Raspberry Pi node. If you have your own SSH keys, you can skip this step. To create SSH keys run the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ssh-keygen -t rsa -b <span style="color:#ae81ff">4096</span> -f ~/.ssh/rpi -P <span style="color:#e6db74">&#34;&#34;</span>
+</code></pre></div><p>and add it to ssh key agent</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ssh-add ~/.ssh/rpi
+</code></pre></div><h2 id="installation">Installation</h2>
+<div class="article-hero-image-noshadow">
+    <figure >
+        <img src="./images/post/2020-04/k8s-rpi-3.jpeg" alt="Installing stuff on Raspberry Pi"/>
+        
+            <figcaption>
+                    <p class="article-caption">Installing stuff on Raspberry Pi</p>
+            </figcaption>
+        
+    </figure>
+
+</div>
+
+<p>After booting up your Raspberry Pi with the fresh Ubuntu installation, you have to check its IP address. You can do that by logging to your router and checking the DHCP settings for a new lease for a hostname “ubuntu”. You can also do it the old fashion way — connect keyboard and monitor to your Raspberry Pi and log into the machine. Both the username and login is <strong>ubuntu</strong> — after logging in you will have to immediately change your password and log once again. Once you’re there run</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ip addr show eth0
+</code></pre></div><p>And you should see something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc mq state UP group default qlen <span style="color:#ae81ff">1000</span>
+    link/ether dc:a6:32:76:1b:91 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.238/24 brd 192.168.0.255 scope global dynamic eth0
+       valid_lft 329sec preferred_lft 329sec
+    inet6 fe80::dea6:32ff:fe76:1b91/64 scope link 
+       valid_lft forever preferred_lft forev
+</code></pre></div><p>OK, from now we can remotely log in to the machine and the keyboard and monitor won’t be necessary.</p>
+<p>Let’s log into the machine by running</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ssh ubuntu@192.168.0.238
+</code></pre></div><p>If you did not log in before you will have to change your password.</p>
+<p>Let’s log out and copy the SSH keys, so we won’t have to use the password for every login — also for <strong>k3sup</strong> to be able to deploy the Kubernetes cluster. To copy the SSH keys to the machine run the following</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ssh-copy-id -i .ssh/rpi ubuntu@192.168.0.238
+</code></pre></div><p>You should be prompted for password and after successful login you should see something like this</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">/usr/bin/ssh-copy-id: INFO: Source of key<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> to be installed: <span style="color:#e6db74">&#34;.ssh/rpi.pub&#34;</span>
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>, to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: <span style="color:#ae81ff">1</span> key<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> remain to be installed -- <span style="color:#66d9ef">if</span> you are prompted now it is to install the new keys
+ubuntu@192.168.0.238<span style="color:#e6db74">&#39;s password: Number of key(s) added: 1Now try logging into the machine, with:   &#34;ssh &#39;</span>ubuntu@192.168.0.238<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">and check to make sure that only the key(s) you wanted were added.
+</span></code></pre></div><p>Now we can SSH into the Raspberry Pi and finish the system installation.</p>
+<p>Let’s check how much resources are used by the system</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ubuntu@ubuntu:~$ free -m 
+              total        used        free      shared  buff/cache   available
+Mem:           <span style="color:#ae81ff">3791</span>         <span style="color:#ae81ff">183</span>        <span style="color:#ae81ff">2369</span>           <span style="color:#ae81ff">6</span>        <span style="color:#ae81ff">1238</span>        <span style="color:#ae81ff">3552</span>
+Swap:             <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>
+ubuntu@ubuntu:~$ vmstat <span style="color:#ae81ff">1</span>
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77056</span> <span style="color:#ae81ff">1191676</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">81</span>   <span style="color:#ae81ff">261</span>  <span style="color:#ae81ff">182</span>  <span style="color:#ae81ff">192</span> <span style="color:#ae81ff">10</span>  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">84</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77056</span> <span style="color:#ae81ff">1191704</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">53</span>   <span style="color:#ae81ff">48</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77056</span> <span style="color:#ae81ff">1191704</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">46</span>   <span style="color:#ae81ff">44</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77056</span> <span style="color:#ae81ff">1191704</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">57</span>   <span style="color:#ae81ff">59</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191696</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">28</span>   <span style="color:#ae81ff">62</span>   <span style="color:#ae81ff">70</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426264</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">53</span>   <span style="color:#ae81ff">57</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">64</span>   <span style="color:#ae81ff">75</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">49</span>   <span style="color:#ae81ff">47</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">48</span>   <span style="color:#ae81ff">47</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">20</span>   <span style="color:#ae81ff">48</span>   <span style="color:#ae81ff">49</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">71</span>   <span style="color:#ae81ff">73</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2426232</span>  <span style="color:#ae81ff">77064</span> <span style="color:#ae81ff">1191712</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">48</span>   <span style="color:#ae81ff">48</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+</code></pre></div><p>As we can see, the base resource utilization is very low and the Raspberry Pi has quite a bit to offer :)</p>
+<p>Let’s do a quick system update and then make one necessary change so that Kubernetes will work on this machine.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo apt-get update
+sudo apt-get upgrade -y
+</code></pre></div><p>Now let’s edit the boot options <strong>/boot/firmware/nobtcmd.txt</strong> and add <strong>cgroup_memory=1 cgroup_enable=memory</strong> to the end of the line so that file will look like this</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ubuntu@ubuntu:~$ cat /boot/firmware/nobtcmd.txt 
+net.ifnames<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> dwc_otg.lpm_enable<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> console<span style="color:#f92672">=</span>ttyAMA0,115200 console<span style="color:#f92672">=</span>tty1 root<span style="color:#f92672">=</span>LABEL<span style="color:#f92672">=</span>writable rootfstype<span style="color:#f92672">=</span>ext4 elevator<span style="color:#f92672">=</span>deadline rootwait fixrtc cgroup_memory<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cgroup_enable<span style="color:#f92672">=</span>memory
+</code></pre></div><p>If you skip this part. K3s will fail after bootstrapping the cluster and you will be able to find something along those lines in the logs:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Apr  <span style="color:#ae81ff">4</span> 20:22:27 rpi-master k3s<span style="color:#f92672">[</span>2204<span style="color:#f92672">]</span>: time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2020-04-04T20:22:27.635180523Z&#34;</span> level<span style="color:#f92672">=</span>error msg<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Failed to find memory cgroup, you may need to add \\&#34;</span>cgroup_memory<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cgroup_enable<span style="color:#f92672">=</span>memory<span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34; to your linux cmdline (/boot/cmdline.txt on a Raspberry Pi)&#34;</span>
+
+</code></pre></div><p>however, on ubuntu it’s actually the <strong>nobtmcd.txt</strong> file.</p>
+<p>Now, we need to ensure that the Raspberry Pi has a static IP. This is important for both the master and all the additional nodes. If you have access and know how, you can just set the IP on your router to be static, so that after every reboot the machine will always get the same IP. Alternatively, we can set up our Ubuntu to have a static IP. To do this, we need to edit the file <strong>/etc/netplan/50-cloud-init.yaml</strong> to look like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">network:
+  version: <span style="color:#ae81ff">2</span>
+  renderer: networkd
+  ethernets:
+    eth0:
+     dhcp4: no
+     addresses: <span style="color:#f92672">[</span>192.168.0.120/24<span style="color:#f92672">]</span>
+     gateway4: 192.168.0.1
+     nameservers:
+       addresses: <span style="color:#f92672">[</span>8.8.8.8,8.8.4.4<span style="color:#f92672">]</span>
+
+</code></pre></div><p>More information about this topic can be found <a href="https://linuxconfig.org/how-to-configure-static-ip-address-on-ubuntu-18-04-bionic-beaver-linux">here</a></p>
+<p>Last thing to do — set up a unique and friendly hostname, as “ubuntu” will be too generic — especially when we will have more than 1 node. To do so, edit the <strong>/etc/hostname</strong> and set the name to your liking. I chose <strong>rpi-master</strong> for my master node.</p>
+<p>This is it for the installation, you can repeat this process on a second node. I’ve set up my second Raspberry Pi with the IP <strong>192.168.0.121</strong> and hostname <strong>rpi-worker-1</strong></p>
+<h2 id="optimizations-optional">Optimizations (optional)</h2>
+<p>As I dislike having anything unnecessary running in my system — and also I will run many tests and benchmarks on my cluster — I prefer not to have time-based actions or system updates done automatically. Because of that, I prefer to remove almost every service from the system.</p>
+<p>To disable all the services that are not needed for running k3s run the following</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># no WIFI for the server</span>
+sudo systemctl disable wpa_supplicant.service
+<span style="color:#75715e"># no time based tasks executed</span>
+sudo systemctl disable atd.service
+sudo systemctl disable cron
+<span style="color:#75715e"># no restart of services and auto updates - I prefer to run updates myself</span>
+sudo systemctl disable unattended-upgrades.service
+</code></pre></div><p>reboot and….</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ubuntu@rpi-master:~$ free -m 
+              total        used        free      shared  buff/cache   available
+Mem:           <span style="color:#ae81ff">3791</span>         <span style="color:#ae81ff">169</span>        <span style="color:#ae81ff">3423</span>           <span style="color:#ae81ff">6</span>         <span style="color:#ae81ff">198</span>        <span style="color:#ae81ff">3566</span>
+Swap:             <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>
+</code></pre></div><p>OK, so we gained 14 MB, and we can be sure that nothing will suddenly run in the background while running tests. As I love to min/max things, I’m happy with the result!</p>
+<h2 id="bootstrapping-the-cluster">Bootstrapping the cluster</h2>
+<div class="article-hero-image-noshadow">
+    <figure >
+        <img src="./images/post/2020-04/k8s-rpi-4.jpeg" alt="Bootstrapping the cluster"/>
+        
+            <figcaption>
+                    <p class="article-caption">Bootstrapping the cluster</p>
+            </figcaption>
+        
+    </figure>
+
+</div>
+
+<p>To bootstrap the K3s cluster run the following command</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">k3sup install --user ubuntu --sudo --ip 192.168.0.120 --ssh-key ~/.ssh/rpi
+</code></pre></div><p>and validate by running</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export KUBECONFIG<span style="color:#f92672">=</span>/home/upgrade/kubeconfig
+</code></pre></div><p>Wait 1–5 minutes, depending on your network bandwidth and you should be able to run the same commands and have similar output</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">upgrade@ZeroOne ~ $ kubectl get pod -A
+NAMESPACE     NAME                                      READY   STATUS      RESTARTS   AGE
+kube-system   local-path-provisioner-58fb86bdfd-hmcbr   1/1     Running     <span style="color:#ae81ff">0</span>          104s
+kube-system   metrics-server-6d684c7b5-dl27c            1/1     Running     <span style="color:#ae81ff">0</span>          104s
+kube-system   coredns-d798c9dd-zhht7                    1/1     Running     <span style="color:#ae81ff">0</span>          104s
+kube-system   helm-install-traefik-s2hzn                0/1     Completed   <span style="color:#ae81ff">2</span>          104s
+kube-system   svclb-traefik-4cwg9                       2/2     Running     <span style="color:#ae81ff">0</span>          29s
+kube-system   traefik-6787cddb4b-kcj9j                  1/1     Running     <span style="color:#ae81ff">0</span>          30s
+upgrade@ZeroOne ~ $ kubectl  cluster-info 
+Kubernetes master is running at &lt;https://192.168.0.120:6443&gt;
+CoreDNS is running at &lt;https://192.168.0.120:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy&gt;
+Metrics-server is running at &lt;https://192.168.0.120:6443/api/v1/namespaces/kube-system/services/https:metrics-server:/proxy&gt;To further debug and diagnose cluster problems, use <span style="color:#e6db74">&#39;kubectl cluster-info dump&#39;</span>.
+</code></pre></div><p>And the cluster is up and running!</p>
+<p>If this is your only cluster, copy the config file to <strong>~/.kube/config</strong> for convenience. You won’t have to export the environment variable <strong>KUBECONFIG</strong> to access this cluster.</p>
+<p>As we can see the load on our master node jumped up a bit</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ubuntu@rpi-master:~$ vmstat <span style="color:#ae81ff">1</span>
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218940</span>  <span style="color:#ae81ff">29752</span> <span style="color:#ae81ff">873468</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">82</span>   <span style="color:#ae81ff">614</span>  <span style="color:#ae81ff">978</span> <span style="color:#ae81ff">1593</span> <span style="color:#ae81ff">10</span>  <span style="color:#ae81ff">9</span> <span style="color:#ae81ff">76</span>  <span style="color:#ae81ff">6</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218688</span>  <span style="color:#ae81ff">29752</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2855</span> <span style="color:#ae81ff">5331</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218688</span>  <span style="color:#ae81ff">29760</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">32</span> <span style="color:#ae81ff">2463</span> <span style="color:#ae81ff">4605</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">97</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2217132</span>  <span style="color:#ae81ff">29760</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">5417</span> <span style="color:#ae81ff">9919</span>  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">83</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2217964</span>  <span style="color:#ae81ff">29760</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3459</span> <span style="color:#ae81ff">5780</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">78</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2217664</span>  <span style="color:#ae81ff">29760</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3194</span> <span style="color:#ae81ff">5897</span>  <span style="color:#ae81ff">3</span>  <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">94</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218924</span>  <span style="color:#ae81ff">29760</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">4327</span> <span style="color:#ae81ff">7566</span>  <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">13</span> <span style="color:#ae81ff">83</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218672</span>  <span style="color:#ae81ff">29768</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">3040</span> <span style="color:#ae81ff">5547</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218672</span>  <span style="color:#ae81ff">29768</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">2758</span> <span style="color:#ae81ff">5124</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">4</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218672</span>  <span style="color:#ae81ff">29768</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3057</span> <span style="color:#ae81ff">5681</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218704</span>  <span style="color:#ae81ff">29768</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3480</span> <span style="color:#ae81ff">6466</span>  <span style="color:#ae81ff">3</span>  <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">94</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2218704</span>  <span style="color:#ae81ff">29768</span> <span style="color:#ae81ff">873496</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3130</span> <span style="color:#ae81ff">5789</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">95</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+</code></pre></div><p>But there is still plenty of resources for our apps to use.</p>
+<p>We can also verify if Traefik and the service load balancer (which emulates cloud load balancers) are working, by trying to connect to the IP of the cluster master through the browser or by running the following</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">upgrade@ZeroOne ~ $ curl http://192.168.0.120
+<span style="color:#ae81ff">404</span> page not found
+</code></pre></div><p>We got a response, so that means the ingress is also working correctly. We just don’t have anything deployed yet, so Traefik does not serve anything.</p>
+<h2 id="join-the-node">Join the node</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">k3sup join --user ubuntu --sudo  --ssh-key ~/.ssh/upgnet/rpi  --server-ip 192.168.0.120  --ip 192.168.0.121
+</code></pre></div><p>wait a couple of seconds and … TADAM!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">upgrade@ZeroOne ~ $ kubectl get node
+NAME           STATUS   ROLES    AGE   VERSION
+rpi-master     Ready    master   21m   v1.17.2+k3s1
+rpi-worker-1   Ready    &lt;none&gt;   17s   v1.17.2+k3s1
+upgrade@ZeroOne ~ $ kubectl top node
+NAME           CPU<span style="color:#f92672">(</span>cores<span style="color:#f92672">)</span>   CPU%   MEMORY<span style="color:#f92672">(</span>bytes<span style="color:#f92672">)</span>   MEMORY%   
+rpi-master     367m         9%     712Mi           18%       
+rpi-worker-1   51m          1%     221Mi           5%
+</code></pre></div><p>If you SSH into the node and run</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ubuntu@rpi-worker-1:~$ free -m 
+              total        used        free      shared  buff/cache   available
+Mem:           <span style="color:#ae81ff">3822</span>         <span style="color:#ae81ff">227</span>        <span style="color:#ae81ff">3222</span>          <span style="color:#ae81ff">10</span>         <span style="color:#ae81ff">372</span>        <span style="color:#ae81ff">3546</span>
+Swap:             <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>           <span style="color:#ae81ff">0</span>
+ubuntu@rpi-worker-1:~$ vmstat <span style="color:#ae81ff">1</span>
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299888</span>  <span style="color:#ae81ff">19420</span> <span style="color:#ae81ff">361952</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">193</span>   <span style="color:#ae81ff">256</span>  <span style="color:#ae81ff">289</span>  <span style="color:#ae81ff">390</span>  <span style="color:#ae81ff">4</span>  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">90</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299660</span>  <span style="color:#ae81ff">19420</span> <span style="color:#ae81ff">361980</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">614</span> <span style="color:#ae81ff">1029</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">98</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299660</span>  <span style="color:#ae81ff">19420</span> <span style="color:#ae81ff">361980</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">16</span>  <span style="color:#ae81ff">578</span>  <span style="color:#ae81ff">994</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299628</span>  <span style="color:#ae81ff">19420</span> <span style="color:#ae81ff">361980</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">544</span>  <span style="color:#ae81ff">951</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299628</span>  <span style="color:#ae81ff">19420</span> <span style="color:#ae81ff">361980</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">346</span>  <span style="color:#ae81ff">582</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299504</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361980</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">12</span>  <span style="color:#ae81ff">597</span> <span style="color:#ae81ff">1013</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299472</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361996</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">530</span>  <span style="color:#ae81ff">893</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299472</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361996</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">986</span> <span style="color:#ae81ff">1721</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">98</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299220</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361996</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1138</span> <span style="color:#ae81ff">1940</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">97</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3299220</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361996</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">718</span> <span style="color:#ae81ff">1249</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+ <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">3298968</span>  <span style="color:#ae81ff">19428</span> <span style="color:#ae81ff">361996</span>    <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">507</span>  <span style="color:#ae81ff">844</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">99</span>  <span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">0</span>
+</code></pre></div><p>you will see that the performance hit is mostly on the master. The worker node still has almost all resources available — which is also reflected by the output of the <strong>kubectl top node</strong> command.</p>
+<h2 id="it-wasnt-that-bad-was-it">It wasn’t that bad, was it?</h2>
+<p>Cool! So now we have our Kubernetes cluster with Traefik as Ingress controller, metrics service and a local storage provisioner. And the whole preparation took way longer than the cluster setup itself. Now it’s time to explore Kubernetes with all its glory!</p>
+<h2 id="and-for-all-you-ui-lovers">And for all you UI lovers</h2>
+<p>If you like UI, especially the console ones, I strongly recommend using K9s that you can find here</p>
+<p>Here is the state of the cluster shown in K9s</p>
+<div class="article-hero-image-noshadow">
+    <figure >
+        <img src="./images/post/2020-04/k8s-rpi-5.png" alt="List of pods in the K9s UI"/>
+        
+            <figcaption>
+                    <p class="article-caption">List of pods in the K9s UI</p>
+            </figcaption>
+        
+    </figure>
+
+</div>
+
+<div class="article-hero-image-noshadow">
+    <figure >
+        <img src="./images/post/2020-04/k8s-rpi-6.png" alt="List of nodes in the K9s UI"/>
+        
+            <figcaption>
+                    <p class="article-caption">List of nodes in the K9s UI</p>
+            </figcaption>
+        
+    </figure>
+
+</div>
+
+<h2 id="where-do-we-go-from-here">Where do we go from here?</h2>
+<p>So now you have a complete running Kubernetes cluster, with one or two nodes. Traefik ingress controller is set up so you can deploy any application and use its built-in option to obtain SSL certificates to run it securely even in your home. The metrics service is there, so initial monitoring of your applications is enabled and you can learn a lot about their behaviour in the cluster. You can also start learning Kubernetes and training for the CKAD and CKA certification if you fancy, as you can practice almost everything apart from setting up cluster on this cluster ;) As for me, I’m planning to deploy IceCI to the cluster and start building more applications for the ARM architecture.</p>
+<p>Readout:</p>
+<p>— Traefik: <a href="https://docs.traefik.io/">https://docs.traefik.io/</a></p>
+<p>— K3s: <a href="https://k3s.io/">https://k3s.io/</a></p>
+<p>— K3sup: <a href="https://github.com/alexellis/k3sup">https://github.com/alexellis/k3sup</a></p>
+<p>— K9s: <a href="https://github.com/derailed/k9s">https://github.com/derailed/k9s</a></p>
+<p>— Kubernetes documentation: <a href="https://kubernetes.io/docs/setup/">https://kubernetes.io/docs/setup/</a></p>
+
+        </article>
+
+        <div id="articleTags" class="section narrow">
+    <div class="article-hero">
+        <p>
+            
+            
+                
+                
+                    <a href="https://dandruszak.github.io/tags/kubernetes/" class="article-hero-tag">Kubernetes</a>
+                
+            
+                
+                
+                    <a href="https://dandruszak.github.io/tags/raspberry-pi/" class="article-hero-tag">Raspberry Pi</a>
+                
+            
+                
+                
+                    <a href="https://dandruszak.github.io/tags/ubuntu/" class="article-hero-tag">Ubuntu</a>
+                
+            
+                
+                
+                    <a href="https://dandruszak.github.io/tags/edge-computing/" class="article-hero-tag">Edge Computing</a>
+                
+            
+                
+                
+                    <a href="https://dandruszak.github.io/tags/tutorial/" class="article-hero-tag">Tutorial</a>
+                
+            
+        </p>
+    </div>
+</div>
+
+
+        
+
+
+
+
+
+    
+    
+    
+        
+    
+
+
+
+
+<section id="articleNext" class="section nartrow">
+    <h3 class="footer-next-heading">More articles from icetek.io</h3>
+    <div class="footer-spacer"></div>
+    <div class="next-articles-grid" numberOfArticles={numberOfArticles}>
+        <div class="post-row">
+            
+                <a href="/post/2020-03-31-kubectl-alpha-debug/" class="article-link"
+                 id="article-link-bigger">
+                    <div>
+                        <div class="image-container-noshadow">
+                            <img src="./images/post/2020-03/kubernetes-1.18.png" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                New in Kubernetes 1.18 - kubectl alpha debug
+                            </h2>
+                            <p class="article-excerpt">
+                                Is it useful? What problems can it help solve?
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 7 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+                <a href="/post/2020-03-26-porting-iceci-to-arm/" class="article-link"
+                >
+                    <div>
+                        <div class="image-container-noshadow">
+                            <img src="./images/post/2020-03/arm1.jpeg" class="article-image" />
+                        </div>
+                        <div>
+                            <h2 class="article-title">
+                                Porting IceCI to ARM
+                            </h2>
+                            <p class="article-excerpt">
+                                A story of me being silly
+                            </p>
+                            <div class="article-metadata">
+                                March 3, 2020 · 11 min read
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+</section>
+
+    </section>
+
+
+        
+        <div class="footer-gradient"></div>
+    <div class="section narrow">
+      <div class="footer-hr"></div>
+      <div class="footer-container">
+        <div class="footer-text">
+          © 2020 icetek.io
+        </div>
+        <div class="social-icon-outer">
+    <div class="social-icon-container">
+        
+            
+                
+                <a href="https://github.com/icetekio"><svg
+class="social-icon-image"
+width="32"
+height="32"
+viewBox="0 0 14 14"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+<path
+  fillRule="evenodd"
+  clipRule="evenodd"
+  d="M7 0C3.1325 0 0 3.21173 0 7.17706C0 10.3529 2.00375 13.0353 4.78625 13.9863C5.13625 14.0491 5.2675 13.8338 5.2675 13.6454C5.2675 13.4749 5.25875 12.9097 5.25875 12.3087C3.5 12.6406 3.045 11.8691 2.905 11.4653C2.82625 11.259 2.485 10.622 2.1875 10.4516C1.9425 10.317 1.5925 9.98508 2.17875 9.97611C2.73 9.96714 3.12375 10.4964 3.255 10.7118C3.885 11.7973 4.89125 11.4923 5.29375 11.3039C5.355 10.8374 5.53875 10.5234 5.74 10.3439C4.1825 10.1645 2.555 9.54549 2.555 6.80026C2.555 6.01976 2.82625 5.37382 3.2725 4.87143C3.2025 4.692 2.9575 3.95635 3.3425 2.96951C3.3425 2.96951 3.92875 2.78111 5.2675 3.70516C5.8275 3.54367 6.4225 3.46293 7.0175 3.46293C7.6125 3.46293 8.2075 3.54367 8.7675 3.70516C10.1063 2.77214 10.6925 2.96951 10.6925 2.96951C11.0775 3.95635 10.8325 4.692 10.7625 4.87143C11.2087 5.37382 11.48 6.01079 11.48 6.80026C11.48 9.55446 9.84375 10.1645 8.28625 10.3439C8.54 10.5682 8.75875 10.9988 8.75875 11.6717C8.75875 12.6316 8.75 13.4032 8.75 13.6454C8.75 13.8338 8.88125 14.0581 9.23125 13.9863C11.9963 13.0353 14 10.3439 14 7.17706C14 3.21173 10.8675 0 7 0Z"
+  fill="#73737D"
+/>
+</svg>
+</a>
+                <span class="hidden">https://github.com/icetekio</span>
+            
+        
+            
+                
+                <a href="https://www.linkedin.com/company/icetek"><svg
+class="social-icon-image"
+width="32"
+height="32"
+viewBox="0 0 14 14"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+{...props}
+>
+<path
+  fillRule="evenodd"
+  clipRule="evenodd"
+  d="M3.59615 13.125H0.871552V4.36523H3.59615V13.125ZM2.24847 3.16406C1.81878 3.16406 1.44769 3.00781 1.13519 2.69531C0.822692 2.38281 0.666443 2.01171 0.666443 1.58203C0.666443 1.15234 0.822692 0.781248 1.13519 0.468749C1.44769 0.156249 1.81878 0 2.24847 0C2.67816 0 3.04925 0.156249 3.36175 0.468749C3.67425 0.781248 3.8305 1.15234 3.8305 1.58203C3.8305 2.01171 3.67425 2.38281 3.36175 2.69531C3.04925 3.00781 2.67816 3.16406 2.24847 3.16406ZM13.7915 13.125H11.0669V8.84765C11.0669 8.14452 11.0083 7.63671 10.8911 7.32421C10.6763 6.79687 10.2563 6.5332 9.63134 6.5332C9.00634 6.5332 8.56689 6.76757 8.31298 7.23632C8.11767 7.58788 8.02001 8.10546 8.02001 8.78905V13.125H5.32471V4.36523H7.93212V5.5664H7.96142C8.15673 5.17578 8.46923 4.85351 8.89892 4.59961C9.36767 4.28711 9.91454 4.13086 10.5395 4.13086C11.8091 4.13086 12.6977 4.53125 13.2055 5.33203C13.5962 5.97656 13.7915 6.97265 13.7915 8.3203V13.125Z"
+  fill="#73737D"
+/>
+</svg>
+</a>
+                <span class="hidden">https://www.linkedin.com/company/icetek</span>
+            
+        
+            
+                
+                <a href="https://twitter.com/icetekio"><svg
+class="social-icon-image"
+width="32"
+height="32"
+viewBox="0 0 16 13"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+{...props}
+>
+<path
+  fillRule="evenodd"
+  clipRule="evenodd"
+  d="M14.0658 2.34438C14.7013 1.96349 15.1892 1.3604 15.419 0.641811C14.8244 0.994439 14.1658 1.25056 13.4648 1.3886C12.9034 0.7905 12.1036 0.416748 11.2185 0.416748C9.51888 0.416748 8.14096 1.79461 8.14096 3.49411C8.14096 3.7353 8.16822 3.97019 8.22068 4.19542C5.66301 4.06708 3.39543 2.84191 1.8776 0.980064C1.6127 1.43458 1.46094 1.96322 1.46094 2.52719C1.46094 3.59485 2.00428 4.5368 2.83003 5.08865C2.32553 5.07268 1.85104 4.93425 1.43608 4.70376C1.43586 4.71659 1.43586 4.72949 1.43586 4.74244C1.43586 6.23349 2.49666 7.47732 3.90448 7.75999C3.64622 7.83033 3.37436 7.86792 3.09366 7.86792C2.89537 7.86792 2.70257 7.84866 2.51471 7.81272C2.90629 9.03537 4.0428 9.92509 5.38945 9.94994C4.33623 10.7753 3.00928 11.2673 1.56749 11.2673C1.31911 11.2673 1.07413 11.2528 0.833374 11.2243C2.19527 12.0975 3.81291 12.6069 5.55081 12.6069C11.2113 12.6069 14.3067 7.91763 14.3067 3.85096C14.3067 3.71753 14.3037 3.5848 14.2978 3.45285C14.899 3.01896 15.4208 2.47694 15.8334 1.8598C15.2815 2.10456 14.6884 2.26998 14.0658 2.34438Z"
+  fill="#73737D"
+/>
+</svg>
+</a>
+                <span class="hidden">https://twitter.com/icetekio</span>
+            
+        
+    </div>
+</div>
+    </div>
+</div>
+
+    </div>
+
+    
+    <script src="/js/prism.js"></script>
+</body>
+
+</html>

@@ -2,16 +2,16 @@
 title: "New in Kubernetes 1.18 - kubectl alpha debug"
 date: 2020-03-31
 draft: false 
-hero: "./images/post/kubernetes-1.18.png"
+hero: "./images/post/2020-03/kubernetes-1.18.png"
 excerpt: Is it useful? What problems can it help solve?
 authors:
   - Dominik Andruszak
 tags:
-  - kubernetes
-  - kubectl
-  - devops
-  - minikube
-  - containers
+  - Kubernetes
+  - Kubectl
+  - Devops
+  - Minikube
+  - Containers
 ---
 
 Kubernetes 1.18 has just landed and, as always, a couple of existing features got stabilized and a couple of new ones have been introduced. Let's take gander at one of the newest additions - `kubectl alpha debug`. This nifty `kubectl` feature gives you an additional tool for debugging pods when `kubectl exec` just doesn't cut it. Most probably your application-hosting containers won't have all the necessary debugging tools - they might not even have a shell. The `kubectl alpha debug` feature allows you to create a temporary container inside your pod - and that container can contain all the tools that you need.
